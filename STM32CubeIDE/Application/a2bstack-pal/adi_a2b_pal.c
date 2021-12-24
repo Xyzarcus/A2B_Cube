@@ -64,13 +64,15 @@ and its licensors.
 
 #include "i2c.h"
 #include "stm32f7xx_hal_def.h"
+#include "tim.h"
 
 /*============= D E F I N E S =============*/
 
 /*============= D A T A =============*/
 
 /* Pointer to Platform ECB */
-static a2b_PalEcb* pPalEcb;
+//static
+volatile a2b_PalEcb* pPalEcb;
 A2B_PAL_L3_DATA
 static a2b_UInt8 aDataBuffer[ADI_A2B_MAX_PERI_CONFIG_UNIT_SIZE];
 
@@ -78,7 +80,7 @@ static a2b_UInt8 aDataBuffer[ADI_A2B_MAX_PERI_CONFIG_UNIT_SIZE];
 /*
 ** Function Prototype section
 */
-//static void adi_a2b_TimerCallback(ADI_A2B_TIMER_HANDLER_PTR pTimerHandle);
+static void adi_a2b_TimerCallback(ADI_A2B_TIMER_HANDLER_PTR pTimerHandle);
 //static a2b_UInt32 adi_a2b_AudioHostConfig(A2B_ECB* ecb, ADI_A2B_PERI_DEVICE_CONFIG* psDeviceConfig);
 
 /*
@@ -232,10 +234,10 @@ A2B_PAL_L3_CODE
 a2b_Handle a2b_pal_I2cOpenFunc(a2b_I2cAddrFmt fmt,
         a2b_I2cBusSpeed speed, A2B_ECB* ecb)
 {
-	a2b_Handle nReturnValue = NULL;
+	a2b_Handle nReturnValue = 0;//NULL;
 //    ecb->palEcb.oTWIConfig.a2b_fmt = fmt;
 //    ecb->palEcb.oTWIConfig.i2c_speed = speed;
-//    nReturnValue = adi_a2b_TwiOpen(ecb, NULL);
+	nReturnValue = 1;//adi_a2b_TwiOpen(ecb, NULL);
     ecb->palEcb.i2chnd = nReturnValue;
     return nReturnValue;
 }
@@ -426,6 +428,9 @@ a2b_HResult a2b_pal_TimerInitFunc(A2B_ECB* ecb)
 //		nReturnValue = adi_a2b_TimerStart(ecb->palEcb.oTimerHandler.nTimerNo,
 //				ecb->palEcb.oTimerHandler.nTimerExpireVal);
 //    }
+
+    HAL_TIM_Base_Start_IT(&htim10);
+
     return nReturnValue;
 }
 
@@ -440,9 +445,10 @@ a2b_HResult a2b_pal_TimerInitFunc(A2B_ECB* ecb)
 */
 /*****************************************************************************/
 A2B_PAL_L1_CODE	//ADI_MEM_A2B_CODE_CRIT
-a2b_UInt32 a2b_pal_TimerGetSysTimeFunc()
+a2b_UInt32 a2b_pal_TimerGetSysTimeFunc(void)
 {
     return pPalEcb->nCurrTime;
+    //return HAL_GetTick();
 }
 
 /****************************************************************************/
@@ -455,15 +461,16 @@ a2b_UInt32 a2b_pal_TimerGetSysTimeFunc()
     @return         none
 */
 /********************************************************************************/
-//A2B_PAL_L1_CODE	//ADI_MEM_A2B_CODE_CRIT
-//static void adi_a2b_TimerCallback(ADI_A2B_TIMER_HANDLER_PTR pTimerHandle)
-//{
-////	a2b_HResult nReturnValue = (a2b_UInt32)0;
-////	adi_a2b_TimerStop(pPalEcb->oTimerHandler.nTimerNo);
-////	nReturnValue = adi_a2b_TimerStart(pPalEcb->oTimerHandler.nTimerNo,
-////			pPalEcb->oTimerHandler.nTimerExpireVal);
-////    pPalEcb->nCurrTime += 1u;
-//}
+A2B_PAL_L1_CODE	//ADI_MEM_A2B_CODE_CRIT
+static void adi_a2b_TimerCallback(ADI_A2B_TIMER_HANDLER_PTR pTimerHandle)
+{
+//	a2b_HResult nReturnValue = (a2b_UInt32)0;
+//	adi_a2b_TimerStop(pPalEcb->oTimerHandler.nTimerNo);
+//	nReturnValue = adi_a2b_TimerStart(pPalEcb->oTimerHandler.nTimerNo,
+//			pPalEcb->oTimerHandler.nTimerExpireVal);
+//    pPalEcb->nCurrTime += 1u;
+
+}
 
 /*****************************************************************************/
 /*!
@@ -492,7 +499,7 @@ a2b_HResult a2b_pal_TimerShutdownFunc(A2B_ECB* ecb)
 	ecb->palEcb.nCurrTime = 0u;
 //	pPalEcb->oTimerHandler.pCallbackhandle = NULL;
 //	pPalEcb->oTimerHandler.nTimerExpireVal = 0u;  /* One millisec counter */
-
+	HAL_TIM_Base_Stop_IT(&htim10);
     return nReturnValue;
 }
 
@@ -741,7 +748,7 @@ a2b_HResult a2b_pal_AudioShutdownFunc(A2B_ECB* ecb)
 */
 /*****************************************************************************/
 A2B_PAL_L3_CODE
-a2b_HResult adi_a2b_EnableAudioHost()
+a2b_HResult adi_a2b_EnableAudioHost(void)
 {
 
 }
@@ -784,15 +791,15 @@ static a2b_UInt32 adi_a2b_AudioHostConfig(A2B_ECB* ecb, ADI_A2B_PERI_DEVICE_CONF
                     adi_a2b_Concat_Addr_Data(&aDataBuffer[0u], pOPUnit->nAddrWidth, pOPUnit->nAddr);
             	    memcpy(&aDataBuffer[pOPUnit->nAddrWidth], pOPUnit->paConfigData, pOPUnit->nDataCount);
 
-//            	    a2b_pal_I2cWriteFunc(ecb->palEcb.i2chnd, (a2b_UInt16)psDeviceConfig->nDeviceAddress,
-//            	    		(pOPUnit->nAddrWidth + pOPUnit->nDataCount), &aDataBuffer[0u]);
+            	    a2b_pal_I2cWriteFunc(ecb->palEcb.i2chnd, (a2b_UInt16)psDeviceConfig->nDeviceAddress,
+            	    		(pOPUnit->nAddrWidth + pOPUnit->nDataCount), &aDataBuffer[0u]);
                     break;
             /* read */
             case 1u:
             	    adi_a2b_Concat_Addr_Data(&aDataWriteReadBuf[0u], pOPUnit->nAddrWidth, pOPUnit->nAddr);
-//            	    a2b_pal_I2cWriteReadFunc(ecb->palEcb.i2chnd, (a2b_UInt16)psDeviceConfig->nDeviceAddress,
-//            	    		pOPUnit->nAddrWidth, &aDataWriteReadBuf[0u],
-//							pOPUnit->nDataCount, &aDataBuffer[0u]);
+            	    a2b_pal_I2cWriteReadFunc(ecb->palEcb.i2chnd, (a2b_UInt16)psDeviceConfig->nDeviceAddress,
+            	    		pOPUnit->nAddrWidth, &aDataWriteReadBuf[0u],
+							pOPUnit->nDataCount, &aDataBuffer[0u]);
 
                     break;
             /* delay */

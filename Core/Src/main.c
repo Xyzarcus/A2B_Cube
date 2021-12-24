@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "i2c.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -36,7 +37,8 @@
 #include "adi_a2b_externs.h"
 #include <assert.h>
 #include <stdio.h>
-
+#include "adi_a2b_i2c_commandlist.h"
+#include "..\adi_a2b_datatypes.h"
 
 /* USER CODE END Includes */
 
@@ -59,12 +61,20 @@
 /* USER CODE BEGIN PV */
 a2b_App_t gApp_Info;
 a2b_UInt8 CurrNode;
+
+char __argv_string[] = "";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+static a2b_HResult adi_a2b_NetworkSetup(void);
+static void adi_a2b_Concat_Addr_Data(a2b_UInt8 pDstBuf[], a2b_UInt32 nAddrwidth, a2b_UInt32 nAddr);
+a2b_HResult adi_a2b_SystemInit(void);
+//void  adi_a2b_Delay(a2b_UInt32 nTime);
+a2b_HResult adi_a2b_I2COpen(void);
+a2b_HResult adi_a2b_I2CWrite(a2b_UInt16 nDeviceAddress, a2b_UInt16 nWrite, a2b_UInt8* wBuf);
+a2b_HResult adi_a2b_I2CWriteRead(a2b_UInt16 nDeviceAddress, a2b_UInt16 nWrite, a2b_UInt8* wBuf, a2b_UInt16 nRead, a2b_UInt8* rBuf);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -102,7 +112,11 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_USART3_UART_Init();
+  MX_TIM10_Init();
   /* USER CODE BEGIN 2 */
+
+
+  //HAL_TIM_Base_Start_IT(&htim10);
 
   a2b_UInt32 nResult = 0;
   bool bRunFlag = true;
@@ -120,6 +134,9 @@ int main(void)
 	  printf("Currently found node number is:%d\n", CurrNode);
 	  assert(nResult == 0);				/* failed to setup A2B network */
   }
+
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -196,7 +213,120 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+/****************************************************************************/
+/*!
+ @brief          This function does A2B network discovery and the peripheral configuration
+ @return          None
 
+ */
+/********************************************************************************/
+a2b_HResult adi_a2b_NetworkSetup()
+{
+	ADI_A2B_DISCOVERY_CONFIG* pOPUnit;
+	uint32 nIndex, nIndex1;
+	a2b_HResult status = 0;
+	/* Maximum number of writes */
+	static uint8 aDataBuffer[6000];
+	static uint8 aDataWriteReadBuf[4u];
+	uint32 nDelayVal;
+
+	/* Loop over all the configuration */
+	for (nIndex = 0; nIndex < CONFIG_LEN; nIndex++)
+	{
+		pOPUnit = &gaA2BConfig[nIndex];
+		/* Operation code*/
+		switch (pOPUnit->eOpCode)
+		{
+			/* Write */
+			case WRITE:
+				adi_a2b_Concat_Addr_Data(&aDataBuffer[0u], pOPUnit->nAddrWidth, pOPUnit->nAddr);
+				(void)memcpy(&aDataBuffer[pOPUnit->nAddrWidth], pOPUnit->paConfigData, pOPUnit->nDataCount);
+				/* PAL Call, replace with custom implementation  */
+				status = adi_a2b_I2CWrite((uint16)pOPUnit->nDeviceAddr, (uint16)(pOPUnit->nAddrWidth + pOPUnit->nDataCount), &aDataBuffer[0u]);
+				break;
+
+				/* Read */
+			case READ:
+				(void)memset(&aDataBuffer[0u], 0u, pOPUnit->nDataCount);
+				adi_a2b_Concat_Addr_Data(&aDataWriteReadBuf[0u], pOPUnit->nAddrWidth, pOPUnit->nAddr);
+				/* PAL Call, replace with custom implementation  */
+				status = adi_a2b_I2CWriteRead((uint16)pOPUnit->nDeviceAddr, (uint16)pOPUnit->nAddrWidth, &aDataWriteReadBuf[0u], (uint16)pOPUnit->nDataCount, &aDataBuffer[0u]);
+				break;
+
+				/* Delay */
+			case DELAY:
+				nDelayVal = 0u;
+				for(nIndex1 = 0u; nIndex1 < pOPUnit->nDataCount; nIndex1++)
+				{
+					nDelayVal = pOPUnit->paConfigData[nIndex1] | nDelayVal << 8u;
+				}
+				//(void)adi_a2b_Delay(nDelayVal);
+				HAL_Delay(nDelayVal);
+				break;
+
+			default:
+				break;
+
+		}
+		if (status != 0)
+		{
+			/* I2C read/write failed! No point in continuing! */
+			break;
+		}
+	}
+
+	return status;
+}
+
+/****************************************************************************/
+/*!
+ @brief          This function calculates reg value based on width and adds
+ it to the data array
+
+ @param [in]     pDstBuf               Pointer to destination array
+ @param [in]     nAddrwidth            Data unpacking boundary(1 byte / 2 byte /4 byte )
+ @param [in]     nAddr            	  Number of words to be copied
+
+ @return          Return code
+ - 0: Success
+ - 1: Failure
+ */
+/********************************************************************************/
+static void adi_a2b_Concat_Addr_Data(a2b_UInt8 pDstBuf[], a2b_UInt32 nAddrwidth, a2b_UInt32 nAddr)
+{
+	/* Store the read values in the place holder */
+	switch (nAddrwidth)
+	{ /* Byte */
+		case 1u:
+			pDstBuf[0u] = (a2b_UInt8)nAddr;
+			break;
+			/* 16 bit word*/
+		case 2u:
+
+			pDstBuf[0u] = (a2b_UInt8)(nAddr >> 8u);
+			pDstBuf[1u] = (a2b_UInt8)(nAddr & 0xFFu);
+
+			break;
+			/* 24 bit word */
+		case 3u:
+			pDstBuf[0u] = (a2b_UInt8)((nAddr & 0xFF0000u) >> 16u);
+			pDstBuf[1u] = (a2b_UInt8)((nAddr & 0xFF00u) >> 8u);
+			pDstBuf[2u] = (a2b_UInt8)(nAddr & 0xFFu);
+			break;
+
+			/* 32 bit word */
+		case 4u:
+			pDstBuf[0u] = (a2b_UInt8)(nAddr >> 24u);
+			pDstBuf[1u] = (a2b_UInt8)((nAddr & 0xFF0000u) >> 16u);
+			pDstBuf[2u] = (a2b_UInt8)((nAddr & 0xFF00u) >> 8u);
+			pDstBuf[3u] = (a2b_UInt8)(nAddr & 0xFFu);
+			break;
+
+		default:
+			break;
+
+	}
+}
 /* USER CODE END 4 */
 
 /**

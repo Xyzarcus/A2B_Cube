@@ -122,7 +122,7 @@ A2B_DSO_PUBLIC a2b_UInt32 A2B_CALL a2b_msgGetCmd( struct a2b_Msg* msg );
 A2B_DSO_PUBLIC a2b_UInt32 A2B_CALL a2b_msgGetTid( struct a2b_Msg* msg );
 A2B_DSO_PUBLIC a2b_Handle A2B_CALL a2b_msgGetUserData( struct a2b_Msg* msg );
 A2B_DSO_PUBLIC a2b_Handle A2B_CALL a2b_msgGetPayload( struct a2b_Msg* msg );
-A2B_DSO_PUBLIC a2b_UInt32 A2B_CALL a2b_msgGetPayloadCapacity();
+A2B_DSO_PUBLIC a2b_UInt32 A2B_CALL a2b_msgGetPayloadCapacity(void);
 A2B_DSO_PUBLIC a2b_Int16 A2B_CALL a2b_msgGetDestNodeAddr(
                                                         struct a2b_Msg* msg );
 
