@@ -28,6 +28,8 @@
 #include "a2b/seqchart.h"
 #include "utilmacros.h"
 
+#include "stm32f7xx_hal.h"
+
 /*======================= D E F I N E S ===========================*/
 
 /** Flag used to indicate whether or not a timer is in use (allocated) */

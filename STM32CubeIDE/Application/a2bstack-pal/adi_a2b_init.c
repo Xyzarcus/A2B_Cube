@@ -35,7 +35,7 @@ and its licensors.
 #include "adi_a2b_externs.h"
 //#include "adi_a2b_timer.h"
 //#include "adi_a2b_twidriver.h"
-//#include "adi_initialize.h"    /* PRQA S 0602*/
+#include "adi_initialize.h"    /* PRQA S 0602*/
 #include "string.h"
 //#include <services\pwr\adi_pwr.h>
 //#include <services/gpio/adi_gpio.h>
@@ -82,7 +82,7 @@ a2b_HResult adi_a2b_SystemInit(void)
 //	ADI_PWR_RESULT ePwrResult;
 
 	/* Initialize managed drivers and/or services- auto generated code  */
-//	nResult = (uint32)adi_initComponents();
+	nResult = (uint32)adi_initComponents();
 
 	/* SDRAM controller initialization */
 //	*pEBIU_AMGCTL = 0x00F9u;

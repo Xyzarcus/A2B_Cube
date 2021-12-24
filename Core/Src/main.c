@@ -59,7 +59,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-a2b_App_t gApp_Info;
+static a2b_App_t gApp_Info;
 a2b_UInt8 CurrNode;
 
 char __argv_string[] = "";

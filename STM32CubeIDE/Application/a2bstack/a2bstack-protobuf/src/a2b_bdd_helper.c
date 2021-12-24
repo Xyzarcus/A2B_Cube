@@ -27,6 +27,7 @@
 #include "a2b/ctypes.h"
 #include "a2b_bdd_helper.h"
 #include "a2b/regdefs.h"
+#include "a2b/util.h"
 
 /*======================= D E F I N E S ===========================*/
 /*! Configure only non default values */
@@ -516,6 +517,15 @@ a2b_bcfParse_bdd
     }
 	/* Resetting the bdd network */
 	memset(bdd_Graph, 0, sizeof(bdd_Network));
+
+	/*memset(pMasterSlaveChain, 0, sizeof(&pMasterSlaveChain));
+	memset(pCommon, 0, sizeof(&pCommon));
+	memset(pMstCfg, 0, sizeof(&pMstCfg));
+	memset(pSlvCfg, 0, sizeof(&pSlvCfg));*/
+	memset(pMasterSlaveChain, 0, sizeof(ADI_A2B_MASTER_SLAVE_CONFIG));
+	memset(pCommon, 0, sizeof(ADI_A2B_COMMON_CONFIG));
+	memset(pMstCfg, 0, sizeof(ADI_A2B_MASTER_NCD));
+	memset(pSlvCfg, 0, sizeof(ADI_A2B_SLAVE_NCD));
 
 	/* Get master-slave chain pointer */
 	pMasterSlaveChain = pBusDescription->apNetworkconfig[nBusIndex];
@@ -1887,7 +1897,7 @@ void adi_a2b_ParsePeriCfgFrComBCF(ADI_A2B_COMPR_BCD*  pBusDescription, ADI_A2B_N
 			aPeriDownloadTable[nIndex1+1u].aDeviceConfig[nIndex2].bActive        	= 0u;
 		}
 	}
-
+	(void)nBranchID;
 }
 
 
