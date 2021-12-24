@@ -21,24 +21,24 @@ and its licensors.
 /*============= D E F I N E S =============*/
 
 /*! Internal memory code sections */
-#define A2B_L1_CODE   __attribute__ ((section ("L1_code")))
+#define A2B_L1_CODE   /*__attribute__ ((section ("L1_code")))*/
 /*! External memory code sections */
-#define A2B_L3_CODE   __attribute__ ((section ("L3_code")))
+#define A2B_L3_CODE   /*__attribute__ ((section ("L3_code")))*/
 /*! Internal memory data sections */
-#define A2B_L1_DATA   __attribute__ ((section ("L1_data")))
+#define A2B_L1_DATA   /*__attribute__ ((section ("L1_data")))*/
 /*! External memory data sections */
-#define A2B_L3_DATA   __attribute__ ((section ("L3_data")))
+#define A2B_L3_DATA   /*__attribute__ ((section ("L3_data")))*/
 /*! Graph data section  */
-#define ADI_A2B_MEM_BCF_DATA   __attribute__ ((section ("L3_data")))
+#define ADI_A2B_MEM_BCF_DATA   /*__attribute__ ((section ("L3_data")))*/
 /*! Graph data section  */
-#define ADI_A2B_MEM_GRAPH_DATA   __attribute__ ((section ("L3_data")))
+#define ADI_A2B_MEM_GRAPH_DATA   /*__attribute__ ((section ("L3_data")))*/
 /*! Peripheral data  section  */
-#define ADI_A2B_MEM_PERI_CONFIG_DATA __attribute__ ((section ("sdram0_data")))
+#define ADI_A2B_MEM_PERI_CONFIG_DATA /*__attribute__ ((section ("sdram0_data")))*/
 /*! Peripheral configuration section  */
-#define ADI_A2B_MEM_PERI_CONFIG_UNIT __attribute__ ((section ("sdram0_data")))
+#define ADI_A2B_MEM_PERI_CONFIG_UNIT /*__attribute__ ((section ("sdram0_data")))*/
 
 /*! Peripheral data  section  */
-#define ADI_A2B_MEM_CONFIG_DATA __attribute__ ((section ("sdram0_data")))
+#define ADI_A2B_MEM_CONFIG_DATA /*__attribute__ ((section ("sdram0_data")))*/
 
 /* Storage classes */
 

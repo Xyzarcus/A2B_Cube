@@ -115,8 +115,9 @@ int main(void)
   MX_TIM10_Init();
   /* USER CODE BEGIN 2 */
 
-
-  //HAL_TIM_Base_Start_IT(&htim10);
+  //HAL_DBGMCU_EnableDBGStandbyMode();
+  DBGMCU->APB2FZ |= DBGMCU_APB2_FZ_DBG_TIM10_STOP;
+  HAL_TIM_Base_Start_IT(&htim10);
 
   a2b_UInt32 nResult = 0;
   bool bRunFlag = true;

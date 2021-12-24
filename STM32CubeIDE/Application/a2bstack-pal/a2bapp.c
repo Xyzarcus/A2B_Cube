@@ -310,6 +310,9 @@ static a2b_Int32 a2b_load(a2b_App_t *pApp_Info)
 	pApp_Info->pBusDescription = &sBusDescription;
 	pApp_Info->pTargetProperties = &sBusDescription.sTargetProperties;
 
+	//a2b_memcpy(pApp_Info->pBusDescription, &sBusDescription, sizeof(sBusDescription));
+	//a2b_memcpy(pApp_Info->pTargetProperties, &sBusDescription.sTargetProperties, sizeof(sBusDescription.sTargetProperties));
+
 #else
 	pApp_Info->nNumBCD = sSuperBCD.nNumBCD;
 	pApp_Info->nDefaultBCDIndex = sSuperBCD.nDefaultBCDIndex;

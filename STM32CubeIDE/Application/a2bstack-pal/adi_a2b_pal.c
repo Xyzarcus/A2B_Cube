@@ -80,7 +80,8 @@ static a2b_UInt8 aDataBuffer[ADI_A2B_MAX_PERI_CONFIG_UNIT_SIZE];
 /*
 ** Function Prototype section
 */
-static void adi_a2b_TimerCallback(ADI_A2B_TIMER_HANDLER_PTR pTimerHandle);
+//static
+//void adi_a2b_TimerCallback(ADI_A2B_TIMER_HANDLER_PTR pTimerHandle);
 //static a2b_UInt32 adi_a2b_AudioHostConfig(A2B_ECB* ecb, ADI_A2B_PERI_DEVICE_CONFIG* psDeviceConfig);
 
 /*
@@ -148,9 +149,9 @@ a2b_palInit
         pal->memMgrShutdown  = a2b_pal_memMgrShutdown;
 #endif
 
-        pal->timerInit       = a2b_pal_TimerInitFunc;
+//        pal->timerInit       = a2b_pal_TimerInitFunc;
         pal->timerGetSysTime = a2b_pal_TimerGetSysTimeFunc;
-        pal->timerShutdown   = a2b_pal_TimerShutdownFunc;
+//        pal->timerShutdown   = a2b_pal_TimerShutdownFunc;
 
 #if defined(A2B_FEATURE_SEQ_CHART) || defined(A2B_FEATURE_TRACE)
         pal->logInit         = a2b_pal_logInit;
@@ -168,7 +169,7 @@ a2b_palInit
         pal->i2cWriteRead    = a2b_pal_I2cWriteReadFunc;
         pal->i2cShutdown     = a2b_pal_I2cShutdownFunc;
 
-        pal->audioInit       = a2b_pal_AudioInitFunc;
+//        pal->audioInit       = a2b_pal_AudioInitFunc;
         pal->audioOpen       = a2b_pal_AudioOpenFunc;
         pal->audioClose      = a2b_pal_AudioCloseFunc;
         pal->audioConfig     = a2b_pal_AudioConfigFunc;
@@ -330,6 +331,9 @@ a2b_HResult a2b_pal_I2cWriteReadFunc(a2b_Handle hnd,
     //nReturnValue = adi_a2b_TwiWriteRead(hnd, addr, nWrite, (a2b_UInt8*)wBuf, nRead, rBuf );
 	nReturnValue = HAL_I2C_Master_Transmit(&hi2c1, addr, (a2b_UInt8*)wBuf, nWrite, 100);
 	nReturnValue = HAL_I2C_Master_Receive(&hi2c1, addr, rBuf, nRead, 100);
+
+	//nReturnValue = HAL_I2C_Mem_Write(&hi2c1, addr, uint16_t MemAddress, uint16_t MemAddSize, (a2b_UInt8*)wBuf, nWrite, 100);*/
+
     return nReturnValue;
 }
 
@@ -418,7 +422,7 @@ a2b_HResult a2b_pal_TimerInitFunc(A2B_ECB* ecb)
 	a2b_HResult nReturnValue = (a2b_UInt32)0;
 //    a2b_UInt32  nDummy;
 //    nDummy = (a2b_UInt32)&adi_a2b_TimerCallback;
-    ecb->palEcb.nCurrTime = 0u;
+//    ecb->palEcb.nCurrTime = 0u;
 //    ecb->palEcb.oTimerHandler.pCallbackhandle = (TIMER_CALL_BACK)nDummy;
 //    ecb->palEcb.oTimerHandler.nTimerExpireVal = 1000u;  /* One millisec counter */
 //    ecb->palEcb.oTimerHandler.nTimerNo = A2B_TIMER_NO;
@@ -429,7 +433,7 @@ a2b_HResult a2b_pal_TimerInitFunc(A2B_ECB* ecb)
 //				ecb->palEcb.oTimerHandler.nTimerExpireVal);
 //    }
 
-    HAL_TIM_Base_Start_IT(&htim10);
+//    HAL_TIM_Base_Start_IT(&htim10);
 
     return nReturnValue;
 }
@@ -447,8 +451,8 @@ a2b_HResult a2b_pal_TimerInitFunc(A2B_ECB* ecb)
 A2B_PAL_L1_CODE	//ADI_MEM_A2B_CODE_CRIT
 a2b_UInt32 a2b_pal_TimerGetSysTimeFunc(void)
 {
-    return pPalEcb->nCurrTime;
-    //return HAL_GetTick();
+    //return pPalEcb->nCurrTime;
+    return HAL_GetTick();
 }
 
 /****************************************************************************/
@@ -468,7 +472,7 @@ static void adi_a2b_TimerCallback(ADI_A2B_TIMER_HANDLER_PTR pTimerHandle)
 //	adi_a2b_TimerStop(pPalEcb->oTimerHandler.nTimerNo);
 //	nReturnValue = adi_a2b_TimerStart(pPalEcb->oTimerHandler.nTimerNo,
 //			pPalEcb->oTimerHandler.nTimerExpireVal);
-//    pPalEcb->nCurrTime += 1u;
+    pPalEcb->nCurrTime += 1u;
 
 }
 
@@ -496,7 +500,7 @@ a2b_HResult a2b_pal_TimerShutdownFunc(A2B_ECB* ecb)
 //	nReturnValue = adi_a2b_TimerStop(pPalEcb->oTimerHandler.nTimerNo);
 //    nReturnValue = adi_a2b_TimerClose(pPalEcb->oTimerHandler.nTimerNo);
 
-	ecb->palEcb.nCurrTime = 0u;
+//	ecb->palEcb.nCurrTime = 0u;
 //	pPalEcb->oTimerHandler.pCallbackhandle = NULL;
 //	pPalEcb->oTimerHandler.nTimerExpireVal = 0u;  /* One millisec counter */
 	HAL_TIM_Base_Stop_IT(&htim10);
