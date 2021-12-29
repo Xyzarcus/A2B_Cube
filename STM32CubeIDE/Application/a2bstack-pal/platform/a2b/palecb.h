@@ -70,6 +70,7 @@ typedef struct a2b_PalEcb
 	//ADI_A2B_TWI_CONFIG               oTWIConfig;
 	ADI_A2B_TIMER_HANDLER            oTimerHandler;
 	uint64_t                         nCurrTime;
+//	struct a2b_StackContext*         Appctx;
 	a2b_Int32						 nChainIndex;
 #if defined(A2B_FEATURE_SEQ_CHART) || defined(A2B_FEATURE_TRACE)
 	A2B_LOG_INFO                   oLogConfig[A2B_TOTAL_LOG_CH];

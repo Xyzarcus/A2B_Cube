@@ -266,7 +266,7 @@ a2b_HResult a2b_pal_I2cReadFunc(a2b_Handle hnd,
 	//a2b_HResult nReturnValue = NULL;
 	HAL_StatusTypeDef nReturnValue = HAL_ERROR;
     //nReturnValue = adi_a2b_TwiRead(hnd, addr, nRead, rBuf);
-	nReturnValue = HAL_I2C_Master_Receive(&hi2c1, addr, rBuf, nRead, 100);
+	nReturnValue = HAL_I2C_Master_Receive(&hi2c1, addr<<1, rBuf, nRead, 100);
 
     return nReturnValue;
 }
@@ -296,7 +296,7 @@ a2b_HResult a2b_pal_I2cWriteFunc(a2b_Handle hnd,
 	//a2b_HResult nReturnValue = NULL;
 	HAL_StatusTypeDef nReturnValue = HAL_ERROR;
     //nReturnValue = adi_a2b_TwiWrite(hnd, addr, nWrite, (a2b_UInt8*)wBuf);
-	nReturnValue = HAL_I2C_Master_Transmit(&hi2c1, addr, (a2b_UInt8*)wBuf, nWrite, 100);
+	nReturnValue = HAL_I2C_Master_Transmit(&hi2c1, addr<<1, /*(a2b_UInt8*)*/wBuf, nWrite, 100);
 
     return nReturnValue;
 }
@@ -323,33 +323,34 @@ a2b_HResult a2b_pal_I2cWriteFunc(a2b_Handle hnd,
 A2B_PAL_L1_CODE	/*ADI_MEM_A2B_CODE_CRIT*/
 a2b_HResult a2b_pal_I2cWriteReadFunc(a2b_Handle hnd,
         a2b_UInt16 addr, a2b_UInt16 nWrite,
-        const a2b_Byte* wBuf, a2b_UInt16 nRead,
+        /*const a2b_Byte**/uint8_t* wBuf, a2b_UInt16 nRead,
         a2b_Byte* rBuf)
 {
 	//a2b_HResult nReturnValue = NULL;
 	HAL_StatusTypeDef nReturnValue = HAL_ERROR;
     //nReturnValue = adi_a2b_TwiWriteRead(hnd, addr, nWrite, (a2b_UInt8*)wBuf, nRead, rBuf );
-	nReturnValue = HAL_I2C_Master_Transmit(&hi2c1, addr, (a2b_UInt8*)wBuf, nWrite, 100);
-	nReturnValue = HAL_I2C_Master_Receive(&hi2c1, addr, rBuf, nRead, 100);
-
-	//nReturnValue = HAL_I2C_Mem_Write(&hi2c1, addr, uint16_t MemAddress, uint16_t MemAddSize, (a2b_UInt8*)wBuf, nWrite, 100);*/
+	nReturnValue = HAL_I2C_Master_Transmit(&hi2c1, addr<<1, wBuf, nWrite, 100);
+	nReturnValue = HAL_I2C_Master_Receive(&hi2c1, addr<<1, rBuf, nRead, 100);
 
     return nReturnValue;
 }
 
-//A2B_PAL_L1_CODE
-//a2b_HResult a2b_EepromWriteRead(a2b_Handle hnd, a2b_UInt16 addr, a2b_UInt16 nWrite,
-//        const a2b_Byte* wBuf, a2b_UInt16 nRead,
-//        a2b_Byte* rBuf)
-//{
-//
-//	a2b_HResult nReturnValue = NULL;
-//	if(hnd != 0)
-//    //nReturnValue = adi_a2b_TwiWriteRead(hnd, addr, nWrite, (a2b_UInt8*)wBuf, nRead, rBuf );
-//	return nReturnValue;
-//
-//
-//}
+A2B_PAL_L1_CODE
+a2b_HResult a2b_EepromWriteRead(a2b_Handle hnd, a2b_UInt16 addr, a2b_UInt16 nWrite,
+        const a2b_Byte* wBuf, a2b_UInt16 nRead,
+        a2b_Byte* rBuf)
+{
+
+	//a2b_HResult nReturnValue = NULL;
+	HAL_StatusTypeDef nReturnValue = HAL_ERROR;
+	if(hnd != 0)
+    //nReturnValue = adi_a2b_TwiWriteRead(hnd, addr, nWrite, (a2b_UInt8*)wBuf, nRead, rBuf );
+	nReturnValue = HAL_I2C_Master_Transmit(&hi2c1, addr<<1, wBuf, nWrite, 100);
+	nReturnValue = HAL_I2C_Master_Receive(&hi2c1, addr<<1, rBuf, nRead, 100);
+	return nReturnValue;
+
+
+}
 /*****************************************************************************/
 /*!
 @brief  This API initializes I2C subsystem.
@@ -368,13 +369,13 @@ a2b_HResult a2b_pal_I2cWriteReadFunc(a2b_Handle hnd,
 A2B_PAL_L3_CODE	//ADI_MEM_A2B_CODE_NO_CRIT
 a2b_UInt32 a2b_pal_I2cShutdownFunc(A2B_ECB* ecb)
 {
-    a2b_UInt32 nReturnValue = (a2b_UInt32)0;
+    //a2b_UInt32 nReturnValue = (a2b_UInt32)0;
     ecb->palEcb.i2chnd = NULL;
-    return nReturnValue;
+    /*return nReturnValue;
 
-    /*A2B_UNUSED( ecb );
+    A2B_UNUSED( ecb );*/
 
-    return A2B_RESULT_SUCCESS;*/
+    return 0;//A2B_RESULT_SUCCESS;
 }
 
 
@@ -754,7 +755,7 @@ a2b_HResult a2b_pal_AudioShutdownFunc(A2B_ECB* ecb)
 A2B_PAL_L3_CODE
 a2b_HResult adi_a2b_EnableAudioHost(void)
 {
-
+	return 0;
 }
 /****************************************************************************/
 /*!
@@ -812,7 +813,8 @@ static a2b_UInt32 adi_a2b_AudioHostConfig(A2B_ECB* ecb, ADI_A2B_PERI_DEVICE_CONF
 			{
 				nDelayVal = (pOPUnit->paConfigData[nIndex1] << (8u * nIndex1)) | nDelayVal;
 			}
-//            (void)adi_a2b_Delay(nDelayVal);
+            //(void)adi_a2b_Delay(nDelayVal);
+            HAL_Delay(nDelayVal);
             break;
 
 

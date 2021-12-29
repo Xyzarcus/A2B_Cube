@@ -37,8 +37,10 @@
 #include "adi_a2b_externs.h"
 #include <assert.h>
 #include <stdio.h>
-#include "adi_a2b_i2c_commandlist.h"
 #include "..\adi_a2b_datatypes.h"
+#include "adi_a2b_commch_interface.h"
+#include "adi_a2b_commch_appinterface.h"
+
 
 /* USER CODE END Includes */
 
@@ -49,6 +51,19 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
+//#define PUSH_BUTTON1_PORT      (ADI_GPIO_PORT_A)	  /*!< GPIO port to which push button 1 is connected to */
+//#define PUSH_BUTTON2_PORT      (ADI_GPIO_PORT_B)	  /*!< GPIO port to which push button 2 is connected to */
+//
+//#define PUSH_BUTTON1_PINT      (ADI_GPIO_PIN_INTERRUPT_0)	/*!< GPIO pint to which push button 1 is connected to */
+//#define PUSH_BUTTON2_PINT      (ADI_GPIO_PIN_INTERRUPT_0)	/*!< GPIO port to which push button 2 is connected to */
+//
+//#define PUSH_BUTTON1_PIN       (ADI_GPIO_PIN_15)	  /*!< GPIO pin within the port to which push button 1 is connected to */
+//#define PUSH_BUTTON2_PIN       (ADI_GPIO_PIN_0)	  	  /*!< GPIO pin within the port to which push button 2 is connected to */
+//
+//#define PUSH_BUTTON1_PINT_PIN  (ADI_GPIO_PIN_31)	  /*!< pin within the pint to which push button 1 is connected to */
+//#define PUSH_BUTTON2_PINT_PIN  (ADI_GPIO_PIN_0)		  /*!< pin within the pint to which push button 2 is connected to */
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -59,22 +74,37 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-static a2b_App_t gApp_Info;
+/*static*/ a2b_App_t gApp_Info;
 a2b_UInt8 CurrNode;
 
 char __argv_string[] = "";
+
+uint32_t				goGpioMem[16*3];
+volatile a2b_Bool		gbPb1Pressed = false;
+volatile a2b_Bool		gbPb2Pressed = false;
+
+uint16_t LD_Red_time=0;
+uint16_t LD_Green_time=0;
+uint16_t LD_Blue_time=0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-static a2b_HResult adi_a2b_NetworkSetup(void);
-static void adi_a2b_Concat_Addr_Data(a2b_UInt8 pDstBuf[], a2b_UInt32 nAddrwidth, a2b_UInt32 nAddr);
-a2b_HResult adi_a2b_SystemInit(void);
+//static a2b_HResult adi_a2b_NetworkSetup(void);
+//static void adi_a2b_Concat_Addr_Data(a2b_UInt8 pDstBuf[], a2b_UInt32 nAddrwidth, a2b_UInt32 nAddr);
+//a2b_HResult adi_a2b_SystemInit(void);
 //void  adi_a2b_Delay(a2b_UInt32 nTime);
-a2b_HResult adi_a2b_I2COpen(void);
-a2b_HResult adi_a2b_I2CWrite(a2b_UInt16 nDeviceAddress, a2b_UInt16 nWrite, a2b_UInt8* wBuf);
-a2b_HResult adi_a2b_I2CWriteRead(a2b_UInt16 nDeviceAddress, a2b_UInt16 nWrite, a2b_UInt8* wBuf, a2b_UInt16 nRead, a2b_UInt8* rBuf);
+//a2b_HResult adi_a2b_I2COpen(void);
+//a2b_HResult adi_a2b_I2CWrite(a2b_UInt16 nDeviceAddress, a2b_UInt16 nWrite, a2b_UInt8* wBuf);
+//a2b_HResult adi_a2b_I2CWriteRead(a2b_UInt16 nDeviceAddress, a2b_UInt16 nWrite, a2b_UInt8* wBuf, a2b_UInt16 nRead, a2b_UInt8* rBuf);
+
+static void 			a2b_HandleCommChRxMsg(uint8 nMsgId, uint16 nMsgLenInBytes, uint8* pMsgPayload);
+//static void 			PushButtons_Init(void);
+//static ADI_GPIO_RESULT 	PushButtons_Setup(ADI_GPIO_PORT	ePbPort, uint32_t nPbPin, ADI_GPIO_PIN_INTERRUPT  ePbPinInt, uint32_t  nPbPinIntPin, ADI_GPIO_CALLBACK pfCallback);
+//static void 			GpioCallback(ADI_GPIO_PIN_INTERRUPT ePinInt, uint32_t Data, void *pCBParam);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -121,6 +151,10 @@ int main(void)
 
   a2b_UInt32 nResult = 0;
   bool bRunFlag = true;
+
+  XfadePayload 	oXfadeData;
+  A2B_COMMCH_RET 	eCommChRet;
+
   adi_initComponents();
 
   nResult = adi_a2b_SystemInit(); 		/* system/platform specific initialization */
@@ -136,7 +170,14 @@ int main(void)
 	  assert(nResult == 0);				/* failed to setup A2B network */
   }
 
+  A2B_COMMCH_RET eRet = A2B_COMMCH_SUCCESS;
+  eRet = adi_a2b_app_CommChInit();
+  uint8_t msg_data0[]={0x08,0x05};
+  uint8_t msg_data1[]={0x08,0x55};
+  //eRet = adi_a2b_app_CommChSendMsg(a2b_UInt8 nMsgId, a2b_UInt16 nMsgLenInBytes, a2b_UInt8* pMsgPayload, int16 nNodeAddr);
 
+//  struct a2b_StackContext *ctx; /*!< Stack context already initialized */
+//  a2b_CommChMsg oCommChTxMsg; /*!< Communication Channel message frame to be transmitted */
 
   /* USER CODE END 2 */
 
@@ -144,15 +185,36 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
+	a2b_stackTick(gApp_Info.ctx);					/* tick keeps all process rolling.. so keep ticking */
 	nResult = a2b_fault_monitor(&gApp_Info);		/* Monitor a2b network for faults and initiate re-discovery if enabled */
 	/*-----------------------------------------------------------*/
 	/* Add your other continuous monitoring application code here */
 	/*-----------------------------------------------------------*/
 	if (nResult != 0)
 		bRunFlag = false;							/* condition to exit the program */
-	a2b_stackTick(gApp_Info.ctx);					/* tick keeps all process rolling.. so keep ticking */
 
+//	HAL_Delay(100);
+//	eRet = adi_a2b_app_CommChSendMsg(0, sizeof(msg_data0), msg_data0, 0xD8);
+//	HAL_Delay(100);
+//	eRet = adi_a2b_app_CommChSendMsg(0, sizeof(msg_data1), msg_data1, 0xD8);
+	//a2b_i2cPeriphWrite (struct a2b_StackContext *ctx, a2b_Int16 node, a2b_UInt16 i2cAddr, a2b_UInt16 nWrite, void *wBuf)
+	//adi_a2b_PeriheralConfig(struct a2b_Plugin* plugin, ADI_A2B_NODE_PERICONFIG *pPeriConfig);
+//	if(gbPb1Pressed == true)
+//	{
+//		gbPb1Pressed = false;
+//		oXfadeData.eXfadeSrc = A2B_ALT_RX_CHN;
+//		eCommChRet = adi_a2b_app_CommChSendMsg(A2B_COMMCH_MSG_REQ_XFADE_AUDIO_SRC, (sizeof(XfadePayload)/sizeof(a2b_UInt8)) , (uint8 *)&oXfadeData, 1);
+//		A2B_UNUSED(eCommChRet);
+//
+//	}
+//	HAL_Delay(50);
+//	else if(gbPb2Pressed == true)
+//	{
+//		gbPb2Pressed = false;
+//		oXfadeData.eXfadeSrc = A2B_ORIG_RX_CHN;
+//		eCommChRet = adi_a2b_app_CommChSendMsg(A2B_COMMCH_MSG_REQ_XFADE_AUDIO_SRC, (sizeof(XfadePayload)/sizeof(a2b_UInt8)) , (uint8 *)&oXfadeData, 1);
+//		A2B_UNUSED(eCommChRet);
+//	}
 
     /* USER CODE END WHILE */
 
@@ -214,113 +276,61 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-/****************************************************************************/
+
+/***********************************************************************************/
 /*!
- @brief          This function does A2B network discovery and the peripheral configuration
- @return          None
+    @brief          This is the call from Communication channel Application wrapper
+    				for a new event
 
- */
-/********************************************************************************/
-a2b_HResult adi_a2b_NetworkSetup()
+    @param [in]     nMsgId       	Message Id.
+    @param [in]     nMsgLenInBytes  Message Length in Bytes
+    @param [in]     pMsgPayload     Message Payload
+    @param [in]     nNodeAddr       Node Address
+    @param [in]     eEventType      Event Type
+
+    @return         Return code
+                    - 0: Success
+                    - 1: Failure
+*/
+/***********************************************************************************/
+void adi_a2b_app_CommChCallBk(uint8 nMsgId, uint16 nMsgLenInBytes, uint8* pMsgPayload, int16 nNodeAddr, A2B_COMMCH_EVENT eEventType)
 {
-	ADI_A2B_DISCOVERY_CONFIG* pOPUnit;
-	uint32 nIndex, nIndex1;
-	a2b_HResult status = 0;
-	/* Maximum number of writes */
-	static uint8 aDataBuffer[6000];
-	static uint8 aDataWriteReadBuf[4u];
-	uint32 nDelayVal;
-
-	/* Loop over all the configuration */
-	for (nIndex = 0; nIndex < CONFIG_LEN; nIndex++)
+	switch (eEventType)
 	{
-		pOPUnit = &gaA2BConfig[nIndex];
-		/* Operation code*/
-		switch (pOPUnit->eOpCode)
-		{
-			/* Write */
-			case WRITE:
-				adi_a2b_Concat_Addr_Data(&aDataBuffer[0u], pOPUnit->nAddrWidth, pOPUnit->nAddr);
-				(void)memcpy(&aDataBuffer[pOPUnit->nAddrWidth], pOPUnit->paConfigData, pOPUnit->nDataCount);
-				/* PAL Call, replace with custom implementation  */
-				status = adi_a2b_I2CWrite((uint16)pOPUnit->nDeviceAddr, (uint16)(pOPUnit->nAddrWidth + pOPUnit->nDataCount), &aDataBuffer[0u]);
-				break;
-
-				/* Read */
-			case READ:
-				(void)memset(&aDataBuffer[0u], 0u, pOPUnit->nDataCount);
-				adi_a2b_Concat_Addr_Data(&aDataWriteReadBuf[0u], pOPUnit->nAddrWidth, pOPUnit->nAddr);
-				/* PAL Call, replace with custom implementation  */
-				status = adi_a2b_I2CWriteRead((uint16)pOPUnit->nDeviceAddr, (uint16)pOPUnit->nAddrWidth, &aDataWriteReadBuf[0u], (uint16)pOPUnit->nDataCount, &aDataBuffer[0u]);
-				break;
-
-				/* Delay */
-			case DELAY:
-				nDelayVal = 0u;
-				for(nIndex1 = 0u; nIndex1 < pOPUnit->nDataCount; nIndex1++)
-				{
-					nDelayVal = pOPUnit->paConfigData[nIndex1] | nDelayVal << 8u;
-				}
-				//(void)adi_a2b_Delay(nDelayVal);
-				HAL_Delay(nDelayVal);
-				break;
-
-			default:
-				break;
-
-		}
-		if (status != 0)
-		{
-			/* I2C read/write failed! No point in continuing! */
+		case A2B_COMMCH_EVENT_RX_MSG: /* Action based on message Id */
+			a2b_HandleCommChRxMsg(nMsgId, nMsgLenInBytes, pMsgPayload);
+			//memcpy(&payload[0], pCommChEventInfo->pRxMsg->pMsgPayload, pCommChEventInfo->pRxMsg->nMsgLenInBytes);
 			break;
-		}
-	}
 
-	return status;
+		case A2B_COMMCH_EVENT_TX_DONE: /* Actions post Tx confirmation */
+			break;
+
+		case A2B_COMMCH_EVENT_TX_TIMEOUT: /* Tx timeout */
+			break;
+
+		case A2B_COMMCH_EVENT_FAILURE: /* Failure condition */
+			break;
+	}
 }
 
-/****************************************************************************/
+/***********************************************************************************/
 /*!
- @brief          This function calculates reg value based on width and adds
- it to the data array
+    @brief          This function handles various messages over Communication channel
 
- @param [in]     pDstBuf               Pointer to destination array
- @param [in]     nAddrwidth            Data unpacking boundary(1 byte / 2 byte /4 byte )
- @param [in]     nAddr            	  Number of words to be copied
+    @param [in]     nMsgId       	Message Id.
+    @param [in]     nMsgLenInBytes  Message Length in Bytes
+    @param [in]     pMsgPayload     Message Payload
 
- @return          Return code
- - 0: Success
- - 1: Failure
- */
-/********************************************************************************/
-static void adi_a2b_Concat_Addr_Data(a2b_UInt8 pDstBuf[], a2b_UInt32 nAddrwidth, a2b_UInt32 nAddr)
+    @return         Return code
+                    - 0: Success
+                    - 1: Failure
+*/
+/***********************************************************************************/
+static void a2b_HandleCommChRxMsg(uint8 nMsgId, uint16 nMsgLenInBytes, uint8* pMsgPayload)
 {
-	/* Store the read values in the place holder */
-	switch (nAddrwidth)
-	{ /* Byte */
-		case 1u:
-			pDstBuf[0u] = (a2b_UInt8)nAddr;
-			break;
-			/* 16 bit word*/
-		case 2u:
-
-			pDstBuf[0u] = (a2b_UInt8)(nAddr >> 8u);
-			pDstBuf[1u] = (a2b_UInt8)(nAddr & 0xFFu);
-
-			break;
-			/* 24 bit word */
-		case 3u:
-			pDstBuf[0u] = (a2b_UInt8)((nAddr & 0xFF0000u) >> 16u);
-			pDstBuf[1u] = (a2b_UInt8)((nAddr & 0xFF00u) >> 8u);
-			pDstBuf[2u] = (a2b_UInt8)(nAddr & 0xFFu);
-			break;
-
-			/* 32 bit word */
-		case 4u:
-			pDstBuf[0u] = (a2b_UInt8)(nAddr >> 24u);
-			pDstBuf[1u] = (a2b_UInt8)((nAddr & 0xFF0000u) >> 16u);
-			pDstBuf[2u] = (a2b_UInt8)((nAddr & 0xFF00u) >> 8u);
-			pDstBuf[3u] = (a2b_UInt8)(nAddr & 0xFFu);
+	switch(nMsgId)
+	{
+		case A2B_COMMCH_MSG_RSP_XFADE_AUDIO_SRC:
 			break;
 
 		default:
@@ -328,6 +338,71 @@ static void adi_a2b_Concat_Addr_Data(a2b_UInt8 pDstBuf[], a2b_UInt32 nAddrwidth,
 
 	}
 }
+
+//static void PushButtons_Init(void)
+//{
+//    ADI_GPIO_RESULT 		eResult;
+//    uint32_t 				nGpioMaxCallbacks;
+//
+//    eResult = adi_gpio_Init(goGpioMem, (16*3), &nGpioMaxCallbacks);
+//
+//    eResult = PushButtons_Setup(PUSH_BUTTON1_PORT,
+//								PUSH_BUTTON1_PIN,
+//								PUSH_BUTTON1_PINT,
+//								PUSH_BUTTON1_PINT_PIN,
+//								GpioCallback);
+//
+//    /* Setup Push Button 2 */
+//    eResult = PushButtons_Setup(PUSH_BUTTON2_PORT,
+//								PUSH_BUTTON2_PIN,
+//								PUSH_BUTTON2_PINT,
+//								PUSH_BUTTON2_PINT_PIN,
+//								GpioCallback);
+//
+//    if(eResult != ADI_GPIO_SUCCESS)
+//    {
+//
+//    }
+//}
+//
+//static ADI_GPIO_RESULT PushButtons_Setup(ADI_GPIO_PORT			ePbPort,
+//										uint32_t      			nPbPin,
+//										ADI_GPIO_PIN_INTERRUPT  ePbPinInt,
+//										uint32_t                nPbPinIntPin,
+//										ADI_GPIO_CALLBACK 		pfCallback)
+//{
+//	ADI_GPIO_RESULT eResult;
+//
+//    /* set GPIO input */
+//    eResult = adi_gpio_SetDirection(ePbPort, nPbPin, ADI_GPIO_DIRECTION_INPUT);
+//    /* set input edge sense */
+//    eResult = adi_gpio_SetPinIntEdgeSense(ePbPinInt, nPbPinIntPin, ADI_GPIO_SENSE_RISING_EDGE);
+//    /* register gpio callback */
+//    eResult = adi_gpio_RegisterCallback(ePbPinInt, nPbPinIntPin, pfCallback, (void*)NULL);
+//	/* enable interrupt mask */
+//	eResult = adi_gpio_EnablePinInterruptMask(ePbPinInt, nPbPinIntPin, true);
+//
+//	return (eResult);
+//}
+//static void GpioCallback(ADI_GPIO_PIN_INTERRUPT ePinInt, uint32_t Data, void *pCBParam)
+//{
+//    if (ePinInt == PUSH_BUTTON1_PINT)
+//    {
+//        if (Data & PUSH_BUTTON1_PINT_PIN)
+//        {
+//        	gbPb1Pressed = true;
+//        }
+//    }
+//
+//    if (ePinInt == PUSH_BUTTON2_PINT)
+//    {
+//    	if (Data & PUSH_BUTTON2_PINT_PIN)
+//        {
+//    		gbPb2Pressed = true;
+//        }
+//    }
+//}
+
 /* USER CODE END 4 */
 
 /**

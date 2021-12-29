@@ -49,7 +49,7 @@ a2b_HResult a2b_pal_I2cWriteFunc(a2b_Handle hnd,
         const a2b_Byte* wBuf);
 a2b_HResult a2b_pal_I2cWriteReadFunc(a2b_Handle hnd,
         a2b_UInt16 addr, a2b_UInt16 nWrite,
-        const a2b_Byte* wBuf, a2b_UInt16 nRead,
+		/*const a2b_Byte*/uint8_t* wBuf, a2b_UInt16 nRead,
         a2b_Byte* rBuf);
 uint32_t a2b_pal_I2cShutdownFunc(A2B_ECB* ecb);
 a2b_HResult a2b_pal_I2cCloseFunc(a2b_Handle hnd);

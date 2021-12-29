@@ -58,7 +58,7 @@
 
 /** Maximum number of A2B master nodes on this platform */
 #ifndef A2B_CONF_MAX_NUM_MASTER_NODES
-#define A2B_CONF_MAX_NUM_MASTER_NODES       (1u)
+#define A2B_CONF_MAX_NUM_MASTER_NODES       (4u)/*(1u)*/
 #endif
 
 #ifndef _TESSY_INCLUDES_
@@ -117,7 +117,7 @@
  *  instance.
  */
 #ifndef A2B_CONF_MAX_NUM_I2C_DEVICES
-#define A2B_CONF_MAX_NUM_I2C_DEVICES        (1u)
+#define A2B_CONF_MAX_NUM_I2C_DEVICES        (4u)/*(1u)*/
 #endif
 
 /** Defines the number of consecutive EEPROM peripheral

@@ -44,6 +44,9 @@
 /* USER CODE BEGIN PV */
 //static
 extern volatile a2b_PalEcb* pPalEcb;
+
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -210,10 +213,44 @@ void TIM1_UP_TIM10_IRQHandler(void)
   /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
   HAL_TIM_IRQHandler(&htim10);
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
-  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+  //HAL_GPIO_TogglePin(LD2_Blue_GPIO_Port, LD2_Blue_Pin);
+
+  if (LD_Red_time) 		LD_Red_time--;
+  if (LD_Green_time)  	LD_Green_time--;
+  if (LD_Blue_time)		LD_Blue_time--;
+
+  if (LD_Red_time)
+	  HAL_GPIO_WritePin(LD_Red_GPIO_Port, LD_Red_Pin, GPIO_PIN_SET);
+  else
+	  HAL_GPIO_WritePin(LD_Red_GPIO_Port, LD_Red_Pin, GPIO_PIN_RESET);
+
+  if (LD_Green_time)
+	  HAL_GPIO_WritePin(LD_Green_GPIO_Port, LD_Green_Pin, GPIO_PIN_SET);
+  else
+	  HAL_GPIO_WritePin(LD_Green_GPIO_Port, LD_Green_Pin, GPIO_PIN_RESET);
+
+  if (LD_Blue_time)
+	  HAL_GPIO_WritePin(LD_Blue_GPIO_Port, LD_Blue_Pin, GPIO_PIN_SET);
+  else
+	  HAL_GPIO_WritePin(LD_Blue_GPIO_Port, LD_Blue_Pin, GPIO_PIN_RESET);
+
   //adi_a2b_TimerCallback();
 //  pPalEcb->nCurrTime += 1u;
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI line[15:10] interrupts.
+  */
+void EXTI15_10_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(USER_Btn_Pin);
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+
+  /* USER CODE END EXTI15_10_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

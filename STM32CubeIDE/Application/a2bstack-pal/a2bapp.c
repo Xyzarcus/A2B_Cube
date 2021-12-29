@@ -57,6 +57,12 @@
 #include <assert.h>
 #include <stdio.h>
 
+#include "main.h"
+
+extern uint16_t LD_Red_time;
+extern uint16_t LD_Green_time;
+extern uint16_t LD_Blue_time;
+
 /*============= D E F I N E S =============*/
 
 #if defined(A2B_BCF_FROM_SOC_EEPROM) && !defined(A2B_FEATURE_EEPROM_PROCESSING)
@@ -1036,6 +1042,7 @@ static void a2bapp_onInterrupt(struct a2b_Msg* msg, a2b_Handle userData)
 
 				A2B_APP_LOG("INTERRUPT: intrType=%u nodeAddr=%d\n\r", interrupt->intrType, interrupt->nodeAddr);
 				/* Add your code to handle interrupt */
+				LD_Red_time=500;
 			}
 			else
 			{
@@ -1100,7 +1107,7 @@ static void a2bapp_onDiscoveryComplete(struct a2b_Msg* msg, a2b_Bool isCancelled
 
 				pApp_Info->discoverySuccessful = true;
 				pApp_Info->nodesDiscovered = results->resp.numNodes;
-
+				LD_Green_time = 1500;
 				/* When line fault monitoring is enabled, Allocate a timer to periodically clear BECNT register to reset the error counter */
 				if ((pApp_Info->bBecovfTimerEnable == A2B_FALSE) && (pApp_Info->pTargetProperties->bLineDiagnostics == 1))
 				{
@@ -1197,7 +1204,7 @@ static void a2bapp_onPowerFault(struct a2b_Msg *msg, a2b_Handle userData)
 		A2B_APP_LOG("\n\r Line fault During Discovery: ");
 
 	}
-
+	LD_Red_time = 3000;
 	if (msg)
 	{
 		fault = (a2b_PowerFault *)a2b_msgGetPayload(msg);
