@@ -79,9 +79,9 @@ a2b_UInt8 CurrNode;
 
 char __argv_string[] = "";
 
-uint32_t				goGpioMem[16*3];
-volatile a2b_Bool		gbPb1Pressed = false;
-volatile a2b_Bool		gbPb2Pressed = false;
+//uint32_t				goGpioMem[16*3];
+//volatile a2b_Bool		gbPb1Pressed = false;
+//volatile a2b_Bool		gbPb2Pressed = false;
 
 uint16_t LD_Red_time=0;
 uint16_t LD_Green_time=0;

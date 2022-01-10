@@ -1042,7 +1042,7 @@ static void a2bapp_onInterrupt(struct a2b_Msg* msg, a2b_Handle userData)
 
 				A2B_APP_LOG("INTERRUPT: intrType=%u nodeAddr=%d\n\r", interrupt->intrType, interrupt->nodeAddr);
 				/* Add your code to handle interrupt */
-				LD_Red_time=500;
+				LD_Red_time=300;
 			}
 			else
 			{
@@ -1094,6 +1094,8 @@ static void a2bapp_onDiscoveryComplete(struct a2b_Msg* msg, a2b_Bool isCancelled
 		if (isCancelled)
 		{
 
+			LD_Red_time = 1500;
+
 			A2B_APP_LOG("Discovery request was cancelled.\n\r");
 
 		}
@@ -1102,12 +1104,13 @@ static void a2bapp_onDiscoveryComplete(struct a2b_Msg* msg, a2b_Bool isCancelled
 			results = (a2b_NetDiscovery*)a2b_msgGetPayload(msg);
 			if (A2B_SUCCEEDED(results->resp.status))
 			{
+				LD_Green_time = 500;
 
 				A2B_APP_LOG("Discovery succeeded with %d nodes discovered\n\r", results->resp.numNodes);
 
 				pApp_Info->discoverySuccessful = true;
 				pApp_Info->nodesDiscovered = results->resp.numNodes;
-				LD_Green_time = 1500;
+
 				/* When line fault monitoring is enabled, Allocate a timer to periodically clear BECNT register to reset the error counter */
 				if ((pApp_Info->bBecovfTimerEnable == A2B_FALSE) && (pApp_Info->pTargetProperties->bLineDiagnostics == 1))
 				{
@@ -1127,6 +1130,7 @@ static void a2bapp_onDiscoveryComplete(struct a2b_Msg* msg, a2b_Bool isCancelled
 			}
 			else
 			{
+				LD_Red_time = 1500;
 
 				A2B_APP_LOG("\n\rDiscovery failed!\n\r");
 
@@ -1730,6 +1734,48 @@ static void a2bapp_initTdmSettings(A2B_ECB* ecb, const bdd_Network* bdd)
  @}
 */
 
+//#define MY_PLUGIN_INIT a2b_myPluginInit
+//#define MY_PLUGIN_NAME "My Slave Plugin"
+//
+//typedef struct a2b_Plugin
+//{
+//	/** Pointer to the stack Context for the master plugin */
+//    struct a2b_StackContext*    ctx;
+//    /** Node Signature structure for the master */
+//    a2b_NodeSignature           nodeSig;
+//    /** Node Signature structure for all the slave nodes attached to this master */
+//    //a2b_NodeSignature           slaveNodeSig[A2B_CONF_MAX_NUM_SLAVE_NODES];
+//    /** Flag to indicate whether the Plugin is in use */
+//    a2b_Bool                    inUse;
+//    /** Pointer to the timer */
+//    struct a2b_Timer*           timer;
+//
+//} a2b_Plugin;
+//
+//static a2b_Plugin gsPlugins[A2B_CONF_MAX_NUM_SLAVE_NODES];
+//
+//a2b_Bool MY_PLUGIN_INIT(struct a2b_PluginApi * api)
+//{
+//	a2b_Bool status = A2B_FALSE;
+//	a2b_UInt32 idx;
+//
+//	if ( A2B_NULL != api)
+//	{
+//		api->open = a2b_pluginOpen;
+//		api->close = a2b_pluginClose;
+//		api->execute = a2b_pluginExecute;
+//		api->interrupt = a2b_pluginInterrupt;
+//		a2b_strncpy(api->name, MY_PLUGIN_NAME, sizeof(api->name) - 1);
+//		api->name[sizeof(api->name) - sizeof(a2b_Char)] = '\0';
+//
+//		for (idx = 0; idx < A2B_ARRAY_SIZE(gsPlugins); ++idx)
+//		{
+//			a2b_memset(&gsPlugins[idx], 0, sizeof(gsPlugins[idx]));
+//		}
+//
+//		status = A2B_TRUE;
+//	}
+//}
 
 /*
 **

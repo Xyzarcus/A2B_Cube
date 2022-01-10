@@ -27,7 +27,7 @@ and its licensors.
 /* DEFAULT SEQUENCE CHART FILE */
 #define A2B_CONF_DEFAULT_SEQCHART_CHAN_URL     "..//SequenceFile.txt"
 
-/* #define A2B_PRINT_CONSOLE */
+#define A2B_PRINT_CONSOLE
 
 /* #define ENABLE_SUPERBCF */
 
