@@ -1034,7 +1034,7 @@ static void a2bapp_onInterrupt(struct a2b_Msg* msg, a2b_Handle userData)
 	if (msg)
 	{
 		interrupt = a2b_msgGetPayload(msg);
-
+		LD_Red_time=300;
 		if (pApp_Info->bDebug)
 		{
 			if (interrupt)
@@ -1042,7 +1042,7 @@ static void a2bapp_onInterrupt(struct a2b_Msg* msg, a2b_Handle userData)
 
 				A2B_APP_LOG("INTERRUPT: intrType=%u nodeAddr=%d\n\r", interrupt->intrType, interrupt->nodeAddr);
 				/* Add your code to handle interrupt */
-				LD_Red_time=300;
+
 			}
 			else
 			{
