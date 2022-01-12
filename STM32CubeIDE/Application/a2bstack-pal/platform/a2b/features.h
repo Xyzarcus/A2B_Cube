@@ -63,7 +63,7 @@
 /**
  * This option controls whether sequence charts are supported or not.
  */
- /* #define A2B_FEATURE_SEQ_CHART */
+//#define A2B_FEATURE_SEQ_CHART
 
 /**
  * This options controls whether trace is support or not.

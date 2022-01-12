@@ -105,6 +105,10 @@ typedef struct {
 	a2b_UInt8 anEeepromPeriCfgInfo[2 * (A2B_CONF_MAX_NUM_SLAVE_NODES + 1)];
 	struct a2b_MsgNotifier *notifyInterrupt;				/*!< Interrupt Notifier  */
 	struct a2b_MsgNotifier *notifyPowerFault;				/*!< Power Fault message notifier */
+
+	struct a2b_MsgNotifier *notifyGpioInterrupt;			/*!< GPIO Interrupt Notifier */
+	struct a2b_MsgNotifier *notifyCustom;					/*!< Custom Notifier */
+
 	struct a2b_Timer* hTmrToHandleBecovf;					/*!< Timer Handler for Bit-error   */
 
 	/* Processing flags local to a2bapp.c */

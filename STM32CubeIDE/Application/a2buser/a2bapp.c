@@ -104,6 +104,9 @@ static void a2bapp_onInterrupt(struct a2b_Msg* msg, a2b_Handle userData);
 static void a2bapp_onDiscoveryComplete(struct a2b_Msg* msg, a2b_Bool isCancelled);
 static void a2bapp_onPowerFault(struct a2b_Msg *msg, a2b_Handle userData);
 
+static void a2bapp_onGpioInterrupt(struct a2b_Msg* msg, a2b_Handle userData);
+static void a2bapp_onCustomNotify(struct a2b_Msg* msg, a2b_Handle userData);
+
 a2b_UInt32 a2b_fault_monitor(a2b_App_t *pApp_Info);
 static void a2b_app_handle_becovf(void* pParam);
 static a2b_HResult a2b_AppDetectBusDrop(a2b_App_t *pApp_Info);
@@ -454,6 +457,14 @@ static a2b_Int32 a2b_start(a2b_App_t *pApp_Info)
 	/* Register for notifications on power faults */
 	pApp_Info->notifyPowerFault = a2b_msgRtrRegisterNotify(pApp_Info->ctx,
 	A2B_MSGNOTIFY_POWER_FAULT, a2bapp_onPowerFault, pApp_Info, A2B_NULL);
+
+
+
+	pApp_Info->notifyGpioInterrupt = a2b_msgRtrRegisterNotify(pApp_Info->ctx,
+	A2B_MSGNOTIFY_GPIO_INTERRUPT, a2bapp_onGpioInterrupt, pApp_Info, A2B_NULL);
+
+	pApp_Info->notifyCustom = a2b_msgRtrRegisterNotify(pApp_Info->ctx,
+	A2B_MSGNOTIFY_CUSTOM, a2bapp_onCustomNotify, pApp_Info, A2B_NULL);
 
 	/* Power diagnostic is set by default. Depending on SigmaStudio
 	 * settings we should only allow re-discovery or not from a2bapp_onPowerFault() callback
@@ -1333,6 +1344,109 @@ static void a2bapp_onPowerFault(struct a2b_Msg *msg, a2b_Handle userData)
 	}
 
 
+}
+
+
+
+
+
+
+/*!****************************************************************************
+ *
+ *  \b               a2bapp_onGpioInterrupt
+ *
+ *  The handler for A2B interrupt notifications.
+ *
+ *  \param           [in]    msg         The A2B interrupt notification message.
+ *
+ *  \param           [in]    userData    User data associated with the
+ *                                       notification registration.
+ *
+ *  \pre             None
+ *
+ *  \post            None
+ *
+ *  \return          None
+ *
+ ******************************************************************************/
+static void a2bapp_onGpioInterrupt(struct a2b_Msg* msg, a2b_Handle userData)
+{
+	a2b_Interrupt* interrupt;
+
+	a2b_App_t *pApp_Info  = (a2b_App_t *)userData;
+
+	A2B_APP_LOG("GPIO irq\n\r");		//lego
+	LD_Blue_time=300;
+
+	if (msg)
+	{
+		interrupt = a2b_msgGetPayload(msg);
+
+//		if (pApp_Info->bDebug)
+//		{
+//			if (interrupt)
+//			{
+//
+//				A2B_APP_LOG("INTERRUPT: intrType=%u nodeAddr=%d\n\r", interrupt->intrType, interrupt->nodeAddr);
+//				/* Add your code to handle interrupt */
+//
+//			}
+//			else
+//			{
+//
+//				A2B_APP_LOG("INTERRUPT: failed to retrieve payload\n\r");
+//			}
+//		}
+	}
+}
+
+/*!****************************************************************************
+ *
+ *  \b               a2bapp_onGpioInterrupt
+ *
+ *  The handler for A2B interrupt notifications.
+ *
+ *  \param           [in]    msg         The A2B interrupt notification message.
+ *
+ *  \param           [in]    userData    User data associated with the
+ *                                       notification registration.
+ *
+ *  \pre             None
+ *
+ *  \post            None
+ *
+ *  \return          None
+ *
+ ******************************************************************************/
+static void a2bapp_onCustomNotify(struct a2b_Msg* msg, a2b_Handle userData)
+{
+	a2b_Interrupt* interrupt;
+
+	a2b_App_t *pApp_Info  = (a2b_App_t *)userData;
+
+	A2B_APP_LOG("CustomNotify \n\r");		//lego
+	LD_Blue_time=300;
+
+	if (msg)
+	{
+		interrupt = a2b_msgGetPayload(msg);
+
+//		if (pApp_Info->bDebug)
+//		{
+//			if (interrupt)
+//			{
+//
+//				A2B_APP_LOG("INTERRUPT: intrType=%u nodeAddr=%d\n\r", interrupt->intrType, interrupt->nodeAddr);
+//				/* Add your code to handle interrupt */
+//
+//			}
+//			else
+//			{
+//
+//				A2B_APP_LOG("INTERRUPT: failed to retrieve payload\n\r");
+//			}
+//		}
+	}
 }
 
 #ifdef A2BAPP_LINK_STATICALLY

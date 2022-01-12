@@ -160,10 +160,10 @@
 #define A2B_CONF_MAX_NUM_MSG_HANDLERS       (A2B_CONF_MAX_NUM_SLAVE_NODES + 1u)
 
 /** Define the number of messages supported per stack instance */
-#define A2B_CONF_MSG_POOL_SIZE              (12u)
+#define A2B_CONF_MSG_POOL_SIZE              (12u)		/*TODO*/
 
 /** Define the number of clients that can register for notifications */
-#define A2B_CONF_MSG_NOTIFICATION_MAX       (4u)
+#define A2B_CONF_MSG_NOTIFICATION_MAX       (4u)		/*TODO*/
 
 
 /** Define the minimum size (in bytes) for a message payload. The actual

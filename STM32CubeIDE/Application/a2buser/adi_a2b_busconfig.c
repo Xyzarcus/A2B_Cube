@@ -1,12 +1,12 @@
 /*******************************************************************************
-Copyright (c) 2021 - Analog Devices Inc. All Rights Reserved.
+Copyright (c) 2022 - Analog Devices Inc. All Rights Reserved.
 This software is proprietary & confidential to Analog Devices, Inc.
 and its licensors.
 ******************************************************************************
 * @file: adi_a2b_busconfig.c
 * @brief: This file contains A2B Schematic information
 * @version: $Revision$
-* @date: Thursday, December 23, 2021-3:00:11 PM
+* @date: Wednesday, January 12, 2022-6:50:39 PM
 * BCF Version - 1.0.0
 * A2B DLL version- 19.3.0
 * A2B Stack DLL version- 19.3.0.0
@@ -57,7 +57,7 @@ ADI_A2B_BCD sBusDescription =
 		.nDiscoveryStartDelay     = 25,
 
 		/*  Enable/Disable  Line diagnostics (Post discovery) */ 
-		.bLineDiagnostics   = ENABLED, /*DISABLED,*/
+		.bLineDiagnostics   = ENABLED/*DISABLED*/,
 
 		/*  Enable/Disable automatic discovery upon critical faults (during discovery process) */ 
 		.bAutoDiscCriticalFault = ENABLED,
@@ -757,7 +757,7 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode0=
 		.sPinMuxSettings =
 		{
 			/*! GPIO 0 Pin multiplexing */
-			.bGPIO0PinUsage	= A2B_GPIO_0_DISABLE ,
+			.bGPIO0PinUsage	= A2B_GPIO_0_INPUT ,
 
 			/*! GPIO 1 Pin multiplexing */
 			.bGPIO1PinUsage	= A2B_GPIO_1_DISABLE ,
@@ -783,10 +783,10 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode0=
 		.sPinIntConfig =
 		{
 			/*! Enable GPIO 0 Input pin interrupt  */
-			.bGPIO0Interrupt	= DISABLED ,
+			.bGPIO0Interrupt	= ENABLED ,
 
 			/*! Interrupt polarity - GPIO 0 Input pin  */
-			.bGPIO0IntPolarity	= RAISING_EDGE ,
+			.bGPIO0IntPolarity	= FALLING_EDGE ,
 
 			/*! Enable GPIO 1 Input pin interrupt  */
 			.bGPIO1Interrupt	= DISABLED ,
