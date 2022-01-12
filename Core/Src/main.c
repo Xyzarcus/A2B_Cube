@@ -17,6 +17,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include "a2bapp.h"
 #include "main.h"
 #include "i2c.h"
 #include "tim.h"
@@ -26,20 +27,19 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "adi_initialize.h"
-//#include "a2bapp_bf.h"
 #include "adi_a2b_externs.h"
 #include "adi_a2b_busconfig.h"
 #include "a2bapp_defs.h"
-#include "a2bapp.h"
 #include <errno.h>
 #include <string.h>
 #include "a2b/pluginapi.h"
-#include "adi_a2b_externs.h"
+
 #include <assert.h>
 #include <stdio.h>
 #include "..\adi_a2b_datatypes.h"
 #include "adi_a2b_commch_interface.h"
 #include "adi_a2b_commch_appinterface.h"
+#include "plugin_priv.h"
 
 
 /* USER CODE END Includes */
@@ -87,23 +87,30 @@ uint16_t LD_Red_time=0;
 uint16_t LD_Green_time=0;
 uint16_t LD_Blue_time=0;
 
+
+//_g_r_g_w
+//01010101
+uint8_t leds_off[]={0x08,0x00};
+uint8_t led_red[]={0x08,0x10};
+uint8_t led_green[]={0x08,0x44};
+uint8_t led_write[]={0x08,0x01};
+uint8_t msg_data0[]={0x08,0x51};//{0x08,0x05};
+uint8_t msg_data1[]={0x08,0x55};
+uint8_t msg_data2[]={0x08,0x05};
+uint8_t msg_data3[]={0x08,0x50};
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-//static a2b_HResult adi_a2b_NetworkSetup(void);
-//static void adi_a2b_Concat_Addr_Data(a2b_UInt8 pDstBuf[], a2b_UInt32 nAddrwidth, a2b_UInt32 nAddr);
-//a2b_HResult adi_a2b_SystemInit(void);
-//void  adi_a2b_Delay(a2b_UInt32 nTime);
-//a2b_HResult adi_a2b_I2COpen(void);
-//a2b_HResult adi_a2b_I2CWrite(a2b_UInt16 nDeviceAddress, a2b_UInt16 nWrite, a2b_UInt8* wBuf);
-//a2b_HResult adi_a2b_I2CWriteRead(a2b_UInt16 nDeviceAddress, a2b_UInt16 nWrite, a2b_UInt8* wBuf, a2b_UInt16 nRead, a2b_UInt8* rBuf);
 
+//void  adi_a2b_Delay(a2b_UInt32 nTime);
 static void 			a2b_HandleCommChRxMsg(uint8 nMsgId, uint16 nMsgLenInBytes, uint8* pMsgPayload);
 //static void 			PushButtons_Init(void);
 //static ADI_GPIO_RESULT 	PushButtons_Setup(ADI_GPIO_PORT	ePbPort, uint32_t nPbPin, ADI_GPIO_PIN_INTERRUPT  ePbPinInt, uint32_t  nPbPinIntPin, ADI_GPIO_CALLBACK pfCallback);
 //static void 			GpioCallback(ADI_GPIO_PIN_INTERRUPT ePinInt, uint32_t Data, void *pCBParam);
+static void a2b_LED_toggle(struct a2b_Msg* msg);
 
 /* USER CODE END PFP */
 
@@ -145,6 +152,8 @@ int main(void)
   MX_TIM10_Init();
   /* USER CODE BEGIN 2 */
   gApp_Info.bDebug = true;
+  //gApp_Info->pTargetProperties->bLineDiagnostics = 1;
+  //gApp_Info->pTargetProperties->nAttemptsCriticalFault = 5;
   //HAL_DBGMCU_EnableDBGStandbyMode();
   DBGMCU->APB2FZ |= DBGMCU_APB2_FZ_DBG_TIM10_STOP;
   HAL_TIM_Base_Start_IT(&htim10);
@@ -152,8 +161,8 @@ int main(void)
   a2b_UInt32 nResult = 0;
   bool bRunFlag = true;
 
-  XfadePayload 	oXfadeData;
-  A2B_COMMCH_RET 	eCommChRet;
+//  XfadePayload 	oXfadeData;
+//  A2B_COMMCH_RET 	eCommChRet;
 
   adi_initComponents();
 
@@ -170,14 +179,17 @@ int main(void)
 	  assert(nResult == 0);				/* failed to setup A2B network */
   }
 
-  A2B_COMMCH_RET eRet = A2B_COMMCH_SUCCESS;
-  eRet = adi_a2b_app_CommChInit();
-  uint8_t msg_data0[]={0x08,0x05};
-  uint8_t msg_data1[]={0x08,0x55};
+//  A2B_COMMCH_RET eRet = A2B_COMMCH_SUCCESS;
+//  eRet = adi_a2b_app_CommChInit();
+
+  uint8_t err_reg=0x02;//{0x17};
+  uint8_t err_answ=0x0;
   //eRet = adi_a2b_app_CommChSendMsg(a2b_UInt8 nMsgId, a2b_UInt16 nMsgLenInBytes, a2b_UInt8* pMsgPayload, int16 nNodeAddr);
 
 //  struct a2b_StackContext *ctx; /*!< Stack context already initialized */
 //  a2b_CommChMsg oCommChTxMsg; /*!< Communication Channel message frame to be transmitted */
+
+  //a2b_LED_toggle(struct a2b_Msg* msg);
 
   /* USER CODE END 2 */
 
@@ -185,7 +197,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	a2b_stackTick(gApp_Info.ctx);					/* tick keeps all process rolling.. so keep ticking */
+	//a2b_stackTick(gApp_Info.ctx);					/* tick keeps all process rolling.. so keep ticking */
 	nResult = a2b_fault_monitor(&gApp_Info);		/* Monitor a2b network for faults and initiate re-discovery if enabled */
 	/*-----------------------------------------------------------*/
 	/* Add your other continuous monitoring application code here */
@@ -193,11 +205,13 @@ int main(void)
 	if (nResult != 0)
 		bRunFlag = false;							/* condition to exit the program */
 
-//	HAL_Delay(100);
-//	eRet = adi_a2b_app_CommChSendMsg(0, sizeof(msg_data0), msg_data0, 0xD8);
-//	HAL_Delay(100);
-//	eRet = adi_a2b_app_CommChSendMsg(0, sizeof(msg_data1), msg_data1, 0xD8);
-	//a2b_i2cPeriphWrite (struct a2b_StackContext *ctx, a2b_Int16 node, a2b_UInt16 i2cAddr, a2b_UInt16 nWrite, void *wBuf)
+	//a2b_i2cPeriphWrite(struct a2b_StackContext* ctx, a2b_Int16 node, a2b_UInt16 i2cAddr, a2b_UInt16 nWrite, void* wBuf)
+	a2b_i2cPeriphWrite(gApp_Info.ctx, 0, 0x70, sizeof(msg_data0), led_green);
+	HAL_Delay(100);
+	a2b_i2cPeriphWrite(gApp_Info.ctx, 0, 0x70, sizeof(msg_data1), leds_off);
+	HAL_Delay(100);
+//	a2b_i2cMasterWriteRead(gApp_Info.ctx, 1, &err_reg, 1, &err_answ);
+
 	//adi_a2b_PeriheralConfig(struct a2b_Plugin* plugin, ADI_A2B_NODE_PERICONFIG *pPeriConfig);
 //	if(gbPb1Pressed == true)
 //	{
@@ -402,6 +416,214 @@ static void a2b_HandleCommChRxMsg(uint8 nMsgId, uint16 nMsgLenInBytes, uint8* pM
 //        }
 //    }
 //}
+
+
+static void a2bapp_keyPressed(struct a2b_Msg* msg, a2b_Bool isCancelled)
+{
+	a2b_NetDiscovery* results;
+//	a2b_Bool discDone;
+
+	if ( A2B_NULL == msg)
+	{
+
+		/* This should *never* happen */
+		A2B_APP_LOG("Error: no msg\n\r");
+
+	}
+	else
+	{
+		a2b_App_t *pApp_Info = a2b_msgGetUserData(msg);
+//		pApp_Info->discoveryDone = true;
+//
+//		if (isCancelled)
+//		{
+
+			LD_Blue_time = 500;
+
+			A2B_APP_LOG("Key Signal.\n\r");
+
+//		}
+//		else
+//		{
+//			results = (a2b_NetDiscovery*)a2b_msgGetPayload(msg);
+//			if (A2B_SUCCEEDED(results->resp.status))
+//			{
+//				LD_Green_time = 500;
+//
+//				A2B_APP_LOG("Discovery succeeded with %d nodes discovered\n\r", results->resp.numNodes);
+//
+//				pApp_Info->discoverySuccessful = true;
+//				pApp_Info->nodesDiscovered = results->resp.numNodes;
+//
+//				/* When line fault monitoring is enabled, Allocate a timer to periodically clear BECNT register to reset the error counter */
+//				if ((pApp_Info->bBecovfTimerEnable == A2B_FALSE) && (pApp_Info->pTargetProperties->bLineDiagnostics == 1))
+//				{
+//
+//					pApp_Info->hTmrToHandleBecovf = a2b_timerAlloc(pApp_Info->ctx, (a2b_TimerFunc)a2b_app_handle_becovf, (a2b_Handle)(pApp_Info));
+//					pApp_Info->bBecovfTimerEnable = A2B_TRUE;
+//
+//					a2b_timerSet(pApp_Info->hTmrToHandleBecovf, A2B_APP_TMRTOHANDLE_BECOVF_AFTER_INTERVAL, A2B_APP_TMRTOHANDLE_BECOVF_REPEAT_INTERVAL);
+//					a2b_timerStart(pApp_Info->hTmrToHandleBecovf);
+//				}
+//				/* If power fault was detected earlier clear flags and attempt count */
+//
+//				pApp_Info->nDiscTryCnt = 0;
+//				pApp_Info->bfaultDone = A2B_FALSE;
+//
+//
+//			}
+//			else
+//			{
+//				LD_Red_time = 1500;
+//
+//				A2B_APP_LOG("\n\rDiscovery failed!\n\r");
+//
+//				pApp_Info->discoverySuccessful = false;
+//				if (((results->resp.status & 0xFFFF) == A2B_EC_CUSTOM_NODE_ID_AUTH) || (results->resp.status & 0xFFFF) == A2B_EC_CUSTOM_NODE_ID_TIMEOUT)
+//				{
+//					/* Supplier id authentication failure */
+//					pApp_Info->faultNode = results->resp.numNodes;
+//					pApp_Info->bCustomAuthFailed = true;
+//
+//				}
+//				if ((results->resp.status & 0xFFFF) == A2B_EC_PERMISSION)
+//				{
+//					/* Basic authentication failure */
+//
+//					pApp_Info->faultNode = results->resp.numNodes;
+//					pApp_Info->bCustomAuthFailed = true;
+//					A2B_APP_LOG("Node Authentication failed\n\r");
+//
+//				}
+//				/* Retry again if we are re-trying post power fault */
+//				if ((pApp_Info->bfaultDone == A2B_TRUE) && (pApp_Info->nDiscTryCnt < pApp_Info->pTargetProperties->nAttemptsCriticalFault))
+//				{
+//					pApp_Info->bRetry = A2B_TRUE;
+//				}
+//				/* If maximum attempts reached clear the post discovery fault flag */
+//				else if ((pApp_Info->bfaultDone == A2B_TRUE) && (pApp_Info->nDiscTryCnt == pApp_Info->pTargetProperties->nAttemptsCriticalFault))
+//				{
+//					pApp_Info->nDiscTryCnt = 0;
+//					pApp_Info->bfaultDone = A2B_FALSE;
+//
+//				}
+//			}
+//		}
+//
+//		/* Force the main loop to exit */
+//		discDone = A2B_TRUE;
+	}
+}
+
+
+static a2b_Int32 a2b_KeyCallback(a2b_App_t *pApp_Info)
+{
+//	a2b_NetDiscovery *discReq;
+	struct a2b_Msg *msg;
+	a2b_HResult result = 0;
+
+	/* Create a network discovery request message */
+	msg = a2b_msgAlloc(pApp_Info->ctx, A2B_MSG_NOTIFY/*A2B_MSG_REQUEST*/, A2B_MSGNOTIFY_CUSTOM/*A2B_MSGREQ_NET_DISCOVERY*/);
+
+	/* Attach the BDD information to the message */
+//	discReq = (a2b_NetDiscovery*)a2b_msgGetPayload(msg);
+//	discReq->req.bdd = &pApp_Info->bdd;
+
+	/* Add this context to the message */
+	a2b_msgSetUserData(msg, (a2b_Handle)pApp_Info, A2B_NULL);
+	result = a2b_msgRtrSendRequest(msg, A2B_NODEADDR_NOTUSED/*A2B_NODEADDR_MASTER*/, a2bapp_keyPressed);
+
+//#ifndef ENABLE_INTRRUPT_PROCESS
+//	a2b_Int32 pollTime = A2BAPP_POLL_PERIOD; //Interrupt polling interval in milliseconds.
+//
+//	/* Instruct the Stack to begin interrupt polling every 25mS */
+//	a2b_intrStartIrqPoll(pApp_Info->ctx, pollTime);
+//#endif
+	/* The message router adds its own reference to the submitted message. */
+	a2b_msgUnref(msg);
+
+	return result;
+}
+
+
+static
+void
+a2b_LED_toggle
+    (
+    struct a2b_Msg* msg
+    )
+{
+    a2b_Int32 retCode = A2B_EXEC_COMPLETE;
+
+    a2b_Plugin* plugin   = (a2b_Plugin*)a2b_msgGetUserData( msg );
+    a2b_UInt32  nodeAddr = a2b_msgGetTid( msg );
+    a2b_UInt32* payload = (a2b_UInt32*)a2b_msgGetPayload( msg );
+    a2b_UInt8 nCfgBlocks = 0u;
+    a2b_PeripheralNode* periphNode;
+
+
+	a2b_i2cPeriphWrite(gApp_Info.ctx, 0, 0x70, sizeof(msg_data2), msg_data2);
+	//HAL_Delay(100);
+	(void)a2b_ActiveDelay(plugin->ctx, 100);
+	a2b_i2cPeriphWrite(gApp_Info.ctx, 0, 0x70, sizeof(msg_data3), msg_data3);
+	//HAL_Delay(100);
+	(void)a2b_ActiveDelay(plugin->ctx, 100);
+
+//    if ( payload )
+//    {
+//        nCfgBlocks = (a2b_UInt8)payload[0];
+//    }
+
+//    A2B_DSCVRY_SEQGROUP1( plugin->ctx,
+//                          "periphCfgStartProcessing for nodeAddr %hd",
+//                          &nodeAddr );
+//
+//    if ( nCfgBlocks == 0u )
+//    {
+//        A2B_DSCVRY_WARN0( plugin->ctx, "periphCfgStartProcessing",
+//                          "EEPROM Cfg Blocks is Zero" );
+//        A2B_DSCVRY_SEQEND( plugin->ctx );
+//        return A2B_EXEC_COMPLETE;
+//    }
+//
+//    A2B_DSCVRYNOTE_DEBUG1( plugin->ctx, "periphCfgStartProcessing",
+//                           "Start Processing %bd Cfg Blocks",
+//                           &nCfgBlocks );
+//
+//    periphNode = A2B_GET_PERIPHNODE( plugin, nodeAddr );
+//
+//#ifdef A2B_BCF_FROM_SOC_EEPROM
+//
+//        A2B_GET_UINT16_BE(periphNode->addr, plugin->periphCfg.pkgCfg, 2u* nodeAddr);
+//        /* 4 bytes from marker */
+//        periphNode->addr 	  += 4u;
+//        periphNode->cfgIdx     = 0u;
+//        periphNode->nodeAddr   = nodeAddr;
+//        periphNode->nCfgBlocks = nCfgBlocks;
+//
+//#else
+//		periphNode->addr       = 0x0008u;
+//		periphNode->cfgIdx     = 0u;
+//		periphNode->nodeAddr   = (a2b_Int16)nodeAddr;
+//		periphNode->nCfgBlocks = nCfgBlocks;
+//#endif
+//    /* Change so the execution flow will change */
+//    (void)a2b_msgSetCmd( msg, A2B_MPLUGIN_CONT_PERIPH_CFG );
+//
+//    /* Begin processing all peripheral configuration blocks */
+//    retCode = a2b_periphCfgProcessing( plugin, (a2b_Int16)nodeAddr );
+//
+//    A2B_DSCVRY_SEQEND( plugin->ctx );
+
+    return retCode;
+
+} /* a2b_periphCfgStartProcessing */
+
+
+
+
+
+
 
 /* USER CODE END 4 */
 

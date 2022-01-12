@@ -518,15 +518,6 @@ a2b_bcfParse_bdd
 	/* Resetting the bdd network */
 	memset(bdd_Graph, 0, sizeof(bdd_Network));
 
-	/*memset(pMasterSlaveChain, 0, sizeof(&pMasterSlaveChain));
-	memset(pCommon, 0, sizeof(&pCommon));
-	memset(pMstCfg, 0, sizeof(&pMstCfg));
-	memset(pSlvCfg, 0, sizeof(&pSlvCfg));*/
-	memset(pMasterSlaveChain, 0, sizeof(ADI_A2B_MASTER_SLAVE_CONFIG));
-	memset(pCommon, 0, sizeof(ADI_A2B_COMMON_CONFIG));
-	memset(pMstCfg, 0, sizeof(ADI_A2B_MASTER_NCD));
-	memset(pSlvCfg, 0, sizeof(ADI_A2B_SLAVE_NCD));
-
 	/* Get master-slave chain pointer */
 	pMasterSlaveChain = pBusDescription->apNetworkconfig[nBusIndex];
 

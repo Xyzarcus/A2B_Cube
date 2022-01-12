@@ -68,7 +68,7 @@
 /**
  * This options controls whether trace is support or not.
  */
-/* #define A2B_FEATURE_TRACE */
+//#define A2B_FEATURE_TRACE
 
 /**
  * This option controls whether the internal fixed pool based memory
@@ -134,13 +134,13 @@
  *  for peripheral configuration are defined then you can free
  *  up some resources by disabling this feature. 
  */
- /*#define A2B_FEATURE_EEPROM_PROCESSING*/
+//#define A2B_FEATURE_EEPROM_PROCESSING
 
 
 /** This feature enables the processing of A2B configurations from local EEPROM
  *  (connected to Target )
  */
- /*#define A2B_BCF_FROM_SOC_EEPROM */
+//#define A2B_BCF_FROM_SOC_EEPROM
 
 /** Internal Feature Definitions */
 /**

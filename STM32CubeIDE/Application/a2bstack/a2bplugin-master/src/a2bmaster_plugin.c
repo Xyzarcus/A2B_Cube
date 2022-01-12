@@ -548,7 +548,7 @@ static void a2b_SendCommChEventNotification(a2b_Plugin* plugin, A2B_COMMCH_EVENT
 	status = a2b_msgRtrNotify(pCommChnotifyMsg);
 	if ( A2B_FAILED(status) )
 	{
-		 A2B_TRACE1((ctx, (A2B_TRC_DOM_PLUGIN | A2B_TRC_LVL_ERROR),
+		 A2B_TRACE1((plugin->ctx, (A2B_TRC_DOM_PLUGIN | A2B_TRC_LVL_ERROR),
 							"Exit: %s: Communication channel Event Notify failed",
 							A2B_MPLUGIN_PLUGIN_NAME));
 	}

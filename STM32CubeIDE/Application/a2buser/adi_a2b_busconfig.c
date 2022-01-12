@@ -57,13 +57,13 @@ ADI_A2B_BCD sBusDescription =
 		.nDiscoveryStartDelay     = 25,
 
 		/*  Enable/Disable  Line diagnostics (Post discovery) */ 
-		.bLineDiagnostics   = DISABLED,
+		.bLineDiagnostics   = ENABLED, /*DISABLED,*/
 
 		/*  Enable/Disable automatic discovery upon critical faults (during discovery process) */ 
 		.bAutoDiscCriticalFault = ENABLED,
 
 		/*  Number of automatic discovery attempts (during discovery process) */ 
-		.nAttemptsCriticalFault = 0,
+		.nAttemptsCriticalFault = 10 /*0*/,
 
 		/* Auto-rediscovery upon post discovery line fault */ 
 		.bAutoRediscOnFault = ENABLED,

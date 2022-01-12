@@ -50,6 +50,7 @@
 #include "periphcfg.h"
 #include "override.h"
 #include "a2b/audio.h"
+//#include "a2b/features.h"
 #ifdef _TESSY_INCLUDES_
 #include "msg_priv.h"
 #include "a2b/msgtypes.h"

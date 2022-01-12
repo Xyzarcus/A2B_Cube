@@ -10,8 +10,8 @@ and its licensors.
  * Developed by: Automotive Software and Systems team, Bangalore, India
 ***************************************************************************/
 /*============= I N C L U D E S =============*/
+#include <a2bapp.h>
 #include "adi_a2b_commch_interface.h"
-#include "a2bapp.h"
 
 /*============= D E F I N E S =============*/
 

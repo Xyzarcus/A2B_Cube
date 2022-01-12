@@ -65,6 +65,7 @@ and its licensors.
 #include "i2c.h"
 #include "stm32f7xx_hal_def.h"
 #include "tim.h"
+#include "a2b/error.h"
 
 /*============= D E F I N E S =============*/
 
@@ -296,7 +297,7 @@ a2b_HResult a2b_pal_I2cWriteFunc(a2b_Handle hnd,
 	//a2b_HResult nReturnValue = NULL;
 	HAL_StatusTypeDef nReturnValue = HAL_ERROR;
     //nReturnValue = adi_a2b_TwiWrite(hnd, addr, nWrite, (a2b_UInt8*)wBuf);
-	nReturnValue = HAL_I2C_Master_Transmit(&hi2c1, addr<<1, /*(a2b_UInt8*)*/wBuf, nWrite, 100);
+	nReturnValue = HAL_I2C_Master_Transmit(&hi2c1, addr<<1, (a2b_UInt8*)wBuf, nWrite, 100);
 
     return nReturnValue;
 }
@@ -345,7 +346,7 @@ a2b_HResult a2b_EepromWriteRead(a2b_Handle hnd, a2b_UInt16 addr, a2b_UInt16 nWri
 	HAL_StatusTypeDef nReturnValue = HAL_ERROR;
 	if(hnd != 0)
     //nReturnValue = adi_a2b_TwiWriteRead(hnd, addr, nWrite, (a2b_UInt8*)wBuf, nRead, rBuf );
-	nReturnValue = HAL_I2C_Master_Transmit(&hi2c1, addr<<1, wBuf, nWrite, 100);
+	nReturnValue = HAL_I2C_Master_Transmit(&hi2c1, addr<<1, (a2b_UInt8*)wBuf, nWrite, 100);
 	nReturnValue = HAL_I2C_Master_Receive(&hi2c1, addr<<1, rBuf, nRead, 100);
 	return nReturnValue;
 

@@ -47,9 +47,9 @@
 /*============= I N C L U D E S =============*/
 
 //#include <sys/platform.h>
+#include <a2bapp.h>
 #include "adi_a2b_busconfig.h"
 #include "a2bapp_defs.h"
-#include "a2bapp.h"
 #include <errno.h>
 #include <string.h>
 #include "a2b/pluginapi.h"
@@ -316,9 +316,6 @@ static a2b_Int32 a2b_load(a2b_App_t *pApp_Info)
 	pApp_Info->pBusDescription = &sBusDescription;
 	pApp_Info->pTargetProperties = &sBusDescription.sTargetProperties;
 
-	//a2b_memcpy(pApp_Info->pBusDescription, &sBusDescription, sizeof(sBusDescription));
-	//a2b_memcpy(pApp_Info->pTargetProperties, &sBusDescription.sTargetProperties, sizeof(sBusDescription.sTargetProperties));
-
 #else
 	pApp_Info->nNumBCD = sSuperBCD.nNumBCD;
 	pApp_Info->nDefaultBCDIndex = sSuperBCD.nDefaultBCDIndex;
@@ -402,13 +399,15 @@ static a2b_Int32 a2b_load(a2b_App_t *pApp_Info)
 	 * specifics of this network configuration.
 	 */
 	pApp_Info->ctx = a2b_stackAlloc(&pApp_Info->pal, &pApp_Info->ecb);
-	A2B_APP_DBG_LOG("Allocate Stack done \n\r");
 
 	/* No context, means failure */
 	if (pApp_Info->ctx == 0)
 	{
 		nResult = 1;
+		A2B_APP_DBG_LOG("Allocate Stack failed \n\r");
 	}
+	else
+		A2B_APP_DBG_LOG("Allocate Stack done \n\r");
 
 	return nResult;
 }
@@ -971,6 +970,9 @@ a2b_UInt32 a2b_fault_monitor(a2b_App_t *pApp_Info)
 		/* If fault has occurred  */
 		if ((pApp_Info->bRetry == A2B_TRUE) && (pApp_Info->bfaultDone == A2B_TRUE))
 		{
+
+			A2B_APP_LOG("fault found \r\n");
+
 			pApp_Info->bRetry = A2B_FALSE;
 			nChainIndex = pApp_Info->ecb.palEcb.nChainIndex;
 
@@ -1031,10 +1033,13 @@ static void a2bapp_onInterrupt(struct a2b_Msg* msg, a2b_Handle userData)
 
 	a2b_App_t *pApp_Info  = (a2b_App_t *)userData;
 
+	A2B_APP_LOG("irq ");		//lego
+	LD_Blue_time=300;
+
 	if (msg)
 	{
 		interrupt = a2b_msgGetPayload(msg);
-		LD_Red_time=300;
+
 		if (pApp_Info->bDebug)
 		{
 			if (interrupt)

@@ -73,16 +73,16 @@ and its licensors.
     
 */
 /***********************************************************************************/
-#pragma section("L1_code")
+//#pragma section("L1_code")
 a2b_HResult adi_a2b_SystemInit(void)
 {
 	uint32 nResult = 0u;
-	uint32 nCClk, nSClk;
+//	uint32 nCClk, nSClk;
 	a2b_HResult eResult = 0u;
 //	ADI_PWR_RESULT ePwrResult;
 
 	/* Initialize managed drivers and/or services- auto generated code  */
-	nResult = (uint32)adi_initComponents();
+//	nResult = (uint32)adi_initComponents();
 
 	/* SDRAM controller initialization */
 //	*pEBIU_AMGCTL = 0x00F9u;

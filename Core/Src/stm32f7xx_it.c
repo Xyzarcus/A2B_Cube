@@ -23,6 +23,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "adi_a2b_externs.h"
+#include "a2bapp.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,8 +46,9 @@
 /* USER CODE BEGIN PV */
 //static
 extern volatile a2b_PalEcb* pPalEcb;
+extern a2b_App_t gApp_Info;
 
-
+volatile int time5ms=0;//time10ms=0;
 
 /* USER CODE END PV */
 
@@ -233,6 +236,20 @@ void TIM1_UP_TIM10_IRQHandler(void)
 	  HAL_GPIO_WritePin(LD_Blue_GPIO_Port, LD_Blue_Pin, GPIO_PIN_SET);
   else
 	  HAL_GPIO_WritePin(LD_Blue_GPIO_Port, LD_Blue_Pin, GPIO_PIN_RESET);
+
+
+
+
+  if (time5ms == 5)//(time10ms == 10)
+  {
+	  HAL_GPIO_WritePin(LD_Blue_GPIO_Port, LD_Blue_Pin, GPIO_PIN_SET);
+	  time5ms=0;//time10ms=0;
+	  a2b_stackTick(gApp_Info.ctx);
+	  HAL_GPIO_WritePin(LD_Blue_GPIO_Port, LD_Blue_Pin, GPIO_PIN_RESET);
+  }
+  time5ms++;//time10ms++;
+
+
 
   //adi_a2b_TimerCallback();
 //  pPalEcb->nCurrTime += 1u;
