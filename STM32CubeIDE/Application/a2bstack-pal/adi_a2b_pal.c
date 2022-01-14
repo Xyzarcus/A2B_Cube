@@ -72,7 +72,7 @@ and its licensors.
 /*============= D A T A =============*/
 
 /* Pointer to Platform ECB */
-//static
+/*static*/
 volatile a2b_PalEcb* pPalEcb;
 A2B_PAL_L3_DATA
 static a2b_UInt8 aDataBuffer[ADI_A2B_MAX_PERI_CONFIG_UNIT_SIZE];
@@ -83,7 +83,7 @@ static a2b_UInt8 aDataBuffer[ADI_A2B_MAX_PERI_CONFIG_UNIT_SIZE];
 */
 //static
 //void adi_a2b_TimerCallback(ADI_A2B_TIMER_HANDLER_PTR pTimerHandle);
-//static a2b_UInt32 adi_a2b_AudioHostConfig(A2B_ECB* ecb, ADI_A2B_PERI_DEVICE_CONFIG* psDeviceConfig);
+static a2b_UInt32 adi_a2b_AudioHostConfig(A2B_ECB* ecb, ADI_A2B_PERI_DEVICE_CONFIG* psDeviceConfig);
 
 /*
 ** Function Definition section
@@ -150,9 +150,9 @@ a2b_palInit
         pal->memMgrShutdown  = a2b_pal_memMgrShutdown;
 #endif
 
-//        pal->timerInit       = a2b_pal_TimerInitFunc;
+        pal->timerInit       = a2b_pal_TimerInitFunc;
         pal->timerGetSysTime = a2b_pal_TimerGetSysTimeFunc;
-//        pal->timerShutdown   = a2b_pal_TimerShutdownFunc;
+        pal->timerShutdown   = a2b_pal_TimerShutdownFunc;
 
 #if defined(A2B_FEATURE_SEQ_CHART) || defined(A2B_FEATURE_TRACE)
         pal->logInit         = a2b_pal_logInit;
@@ -421,7 +421,7 @@ a2b_HResult a2b_pal_TimerInitFunc(A2B_ECB* ecb)
 	a2b_HResult nReturnValue = (a2b_UInt32)0;
 //    a2b_UInt32  nDummy;
 //    nDummy = (a2b_UInt32)&adi_a2b_TimerCallback;
-//    ecb->palEcb.nCurrTime = 0u;
+    ecb->palEcb.nCurrTime = 0u;
 //    ecb->palEcb.oTimerHandler.pCallbackhandle = (TIMER_CALL_BACK)nDummy;
 //    ecb->palEcb.oTimerHandler.nTimerExpireVal = 1000u;  /* One millisec counter */
 //    ecb->palEcb.oTimerHandler.nTimerNo = A2B_TIMER_NO;
@@ -471,7 +471,7 @@ static void adi_a2b_TimerCallback(ADI_A2B_TIMER_HANDLER_PTR pTimerHandle)
 //	adi_a2b_TimerStop(pPalEcb->oTimerHandler.nTimerNo);
 //	nReturnValue = adi_a2b_TimerStart(pPalEcb->oTimerHandler.nTimerNo,
 //			pPalEcb->oTimerHandler.nTimerExpireVal);
-//    pPalEcb->nCurrTime += 1u;
+//    pPalEcb->nCurrTime += 1u;		//in irq
 
 }
 
@@ -499,7 +499,7 @@ a2b_HResult a2b_pal_TimerShutdownFunc(A2B_ECB* ecb)
 //	nReturnValue = adi_a2b_TimerStop(pPalEcb->oTimerHandler.nTimerNo);
 //    nReturnValue = adi_a2b_TimerClose(pPalEcb->oTimerHandler.nTimerNo);
 
-//	ecb->palEcb.nCurrTime = 0u;
+	ecb->palEcb.nCurrTime = 0u;
 //	pPalEcb->oTimerHandler.pCallbackhandle = NULL;
 //	pPalEcb->oTimerHandler.nTimerExpireVal = 0u;  /* One millisec counter */
 //	HAL_TIM_Base_Stop_IT(&htim10);
@@ -524,7 +524,7 @@ a2b_HResult a2b_pal_TimerShutdownFunc(A2B_ECB* ecb)
 A2B_PAL_L3_CODE
 a2b_HResult a2b_pal_AudioInitFunc(A2B_ECB* ecb)
 {
-//    a2b_UInt8 nReturn = 0xFFu;
+    a2b_UInt8 nReturn = 0xFFu;
     a2b_UInt8 nIndex;
     ADI_A2B_PERI_DEVICE_CONFIG* psDeviceConfig;
     ADI_A2B_NODE_PERICONFIG *psPeriConfig;
@@ -633,7 +633,7 @@ a2b_HResult a2b_pal_AudioInitFunc(A2B_ECB* ecb)
     for(nIndex  = 0u; nIndex < (a2b_UInt8)psPeriConfig->nNumConfig; nIndex++)
     {
         psDeviceConfig = &psPeriConfig->aDeviceConfig[nIndex];
-        //nReturn = (a2b_UInt8)adi_a2b_AudioHostConfig(ecb, psDeviceConfig);
+        nReturn = (a2b_UInt8)adi_a2b_AudioHostConfig(ecb, psDeviceConfig);
     }
 #endif
     return( 0	/*nReturn*/);

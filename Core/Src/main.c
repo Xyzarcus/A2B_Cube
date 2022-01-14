@@ -164,11 +164,11 @@ int main(void)
 //  XfadePayload 	oXfadeData;
 //  A2B_COMMCH_RET 	eCommChRet;
 
-  adi_initComponents();
+//  adi_initComponents();
 
-  nResult = adi_a2b_SystemInit(); 		/* system/platform specific initialization */
-  if(nResult != 0)
-	  assert(nResult == 0);
+//  nResult = adi_a2b_SystemInit(); 		/* system/platform specific initialization */
+//  if(nResult != 0)
+//	  assert(nResult == 0);
 
   /* A2B Network Setup. Performs discovery and configuration of A2B nodes and its peripherals */
   nResult = a2b_setup(&gApp_Info);
@@ -197,7 +197,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	//a2b_stackTick(gApp_Info.ctx);					/* tick keeps all process rolling.. so keep ticking */
+	a2b_stackTick(gApp_Info.ctx);					/* tick keeps all process rolling.. so keep ticking */
 	nResult = a2b_fault_monitor(&gApp_Info);		/* Monitor a2b network for faults and initiate re-discovery if enabled */
 	/*-----------------------------------------------------------*/
 	/* Add your other continuous monitoring application code here */
@@ -210,7 +210,7 @@ int main(void)
 	HAL_Delay(100);
 	a2b_i2cPeriphWrite(gApp_Info.ctx, 0, 0x70, sizeof(msg_data1), leds_off);
 	HAL_Delay(100);
-//	a2b_i2cMasterWriteRead(gApp_Info.ctx, 1, &err_reg, 1, &err_answ);
+	a2b_i2cMasterWriteRead(gApp_Info.ctx, 1, &err_reg, 1, &err_answ);
 
 	//adi_a2b_PeriheralConfig(struct a2b_Plugin* plugin, ADI_A2B_NODE_PERICONFIG *pPeriConfig);
 //	if(gbPb1Pressed == true)
@@ -563,11 +563,11 @@ a2b_LED_toggle
 
 
 	a2b_i2cPeriphWrite(gApp_Info.ctx, 0, 0x70, sizeof(msg_data2), msg_data2);
-	//HAL_Delay(100);
-	(void)a2b_ActiveDelay(plugin->ctx, 100);
+	HAL_Delay(100);
+	//(void)a2b_ActiveDelay(plugin->ctx, 100);
 	a2b_i2cPeriphWrite(gApp_Info.ctx, 0, 0x70, sizeof(msg_data3), msg_data3);
-	//HAL_Delay(100);
-	(void)a2b_ActiveDelay(plugin->ctx, 100);
+	HAL_Delay(100);
+	//(void)a2b_ActiveDelay(plugin->ctx, 100);
 
 //    if ( payload )
 //    {
@@ -615,7 +615,7 @@ a2b_LED_toggle
 //
 //    A2B_DSCVRY_SEQEND( plugin->ctx );
 
-    return retCode;
+//    return retCode;
 
 } /* a2b_periphCfgStartProcessing */
 

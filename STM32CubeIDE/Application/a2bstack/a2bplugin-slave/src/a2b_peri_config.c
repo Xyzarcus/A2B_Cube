@@ -55,6 +55,10 @@ and its licensors.
 #include "a2b/timer.h"
 #include "a2b/regdefs.h"
 #include "a2b/seqchart.h"
+
+#include "stm32f7xx_hal.h"
+#include "stdio.h"
+#include "a2bapp.h"
 /*============= D E F I N E S =============*/
 
 
@@ -90,12 +94,24 @@ a2b_HResult adi_a2b_PeriheralConfig(struct a2b_Plugin* plugin, ADI_A2B_NODE_PERI
     a2b_UInt32 nResult = 0u;
     a2b_UInt8 i;
     a2b_Int16 nodeAddr;
+    A2B_APP_LOG("adi_a2b_PeriheralConfig %d",plugin->nodeSig.nodeAddr);
 #ifndef  A2B_BCF_FROM_SOC_EEPROM
     nodeAddr = plugin->nodeSig.nodeAddr;
 	A2B_TRACE1((plugin->ctx, (A2B_TRC_DOM_PLUGIN | A2B_TRC_LVL_INFO),
 								 "a2b_PeriheralConfig: Starting peripheral configuration "
 								 "nodeAddr = %hd", &nodeAddr));
 
+	if (plugin->nodeSig.nodeAddr==1)
+	{
+		A2B_APP_LOG(", FM reset - ");
+		uint8_t temp1[]={0x4A, 0x09};
+		uint8_t temp2[]={0x4A, 0x0B};
+		//a2b_i2cSlaveWrite(struct a2b_StackContext* ctx, a2b_Int16 node, a2b_UInt16 nWrite, void* wBuf);
+		a2b_i2cSlaveWrite(plugin->ctx, 1, sizeof(temp1), temp1);
+		//a2b_i2cPeriphWrite(gApp_Info.ctx, 0, 0x70, sizeof(msg_data0), led_green);
+		HAL_Delay(5);
+		a2b_i2cSlaveWrite(plugin->ctx, 1, sizeof(temp2), temp2);
+	}
 
     for(i = 0u; i < (a2b_UInt8)pPeriConfig->nNumConfig;i++)
     {
@@ -106,6 +122,7 @@ a2b_HResult adi_a2b_PeriheralConfig(struct a2b_Plugin* plugin, ADI_A2B_NODE_PERI
 								 "a2b_PeriheralConfig: Ending peripheral configuration "
 								 "nodeAddr = %hd", &nodeAddr));
 #endif
+	A2B_APP_LOG(" finished\r\n");
     return nResult;
 } 
 
@@ -167,7 +184,8 @@ static a2b_UInt32 adi_a2b_RemoteDeviceConfig(a2b_Plugin* plugin, ADI_A2B_PERI_DE
 					{
 						nDelayVal = (a2b_UInt32)((a2b_UInt32)pOPUnit->paConfigData[nIndex1] << (a2b_UInt32)((a2b_UInt32)8u * nIndex1)) | nDelayVal;
 					}
-            		(void)a2b_ActiveDelay(plugin->ctx, nDelayVal);
+            		//(void)a2b_ActiveDelay(plugin->ctx, nDelayVal);
+            		HAL_Delay(nDelayVal);
                     break;
 
             default: break;

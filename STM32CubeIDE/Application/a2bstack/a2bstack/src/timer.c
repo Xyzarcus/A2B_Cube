@@ -935,5 +935,4 @@ a2b_ActiveDelay
 	{
 		nCurrTime = ctx->stk->pal.timerGetSysTime();
 	}
-	HAL_Delay(nTime);
 }

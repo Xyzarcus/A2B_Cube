@@ -165,7 +165,7 @@ static a2b_Int32 a2b_init(a2b_App_t *pApp_Info)
 		A2B_APP_DBG_LOG("PAL Init done \n\r");
 
 #ifdef ENABLE_INTRRUPT_PROCESS
-		adi_a2b_EnablePinInterrupt(0, &a2b_IntrptCallbk);
+		adi_a2b_EnablePinInterrupt(0, &a2b_IntrptCallbk);	//TODO
 #endif
 	}
 
@@ -719,7 +719,8 @@ static a2b_Int32 a2b_setupPwrDiag(a2b_App_t *pApp_Info)
 
 	a2b_msgRtrSendRequest(msg, A2B_NODEADDR_MASTER, A2B_NULL);
 	a2b_msgUnref(msg);
-	a2b_ActiveDelay(pApp_Info->ctx, 5u);
+	//a2b_ActiveDelay(pApp_Info->ctx, 5u);
+	HAL_Delay(5u);
 
 	return nResult;
 }
@@ -994,7 +995,8 @@ a2b_UInt32 a2b_fault_monitor(a2b_App_t *pApp_Info)
 
 
 			/* delay between re-discovery attempt */
-			a2b_ActiveDelay(pApp_Info->ctx, pApp_Info->pTargetProperties->nRediscInterval);
+			//a2b_ActiveDelay(pApp_Info->ctx, pApp_Info->pTargetProperties->nRediscInterval);
+			HAL_Delay(pApp_Info->pTargetProperties->nRediscInterval);
 
 			/* stop a2b stack */
 			nResult = a2b_stop(pApp_Info);
@@ -1044,7 +1046,7 @@ static void a2bapp_onInterrupt(struct a2b_Msg* msg, a2b_Handle userData)
 
 	a2b_App_t *pApp_Info  = (a2b_App_t *)userData;
 
-	A2B_APP_LOG("irq ");		//lego
+	A2B_APP_LOG("a2bapp_onInterrupt\n\r");
 	LD_Blue_time=300;
 
 	if (msg)
@@ -1056,14 +1058,14 @@ static void a2bapp_onInterrupt(struct a2b_Msg* msg, a2b_Handle userData)
 			if (interrupt)
 			{
 
-				A2B_APP_LOG("INTERRUPT: intrType=%u nodeAddr=%d\n\r", interrupt->intrType, interrupt->nodeAddr);
+				A2B_APP_LOG("\tINTERRUPT: intrType=%u nodeAddr=%d\n\r", interrupt->intrType, interrupt->nodeAddr);
 				/* Add your code to handle interrupt */
 
 			}
 			else
 			{
 
-				A2B_APP_LOG("INTERRUPT: failed to retrieve payload\n\r");
+				A2B_APP_LOG("\tINTERRUPT: failed to retrieve payload\n\r");
 			}
 		}
 	}
@@ -1094,7 +1096,7 @@ static void a2bapp_onDiscoveryComplete(struct a2b_Msg* msg, a2b_Bool isCancelled
 {
 	a2b_NetDiscovery* results;
 	a2b_Bool discDone;
-
+	A2B_APP_LOG("a2bapp_onDiscoveryComplete\n\r");
 	if ( A2B_NULL == msg)
 	{
 
@@ -1212,16 +1214,16 @@ static void a2bapp_onPowerFault(struct a2b_Msg *msg, a2b_Handle userData)
 	a2b_PowerFault *fault;
 
 	a2b_App_t * pAppInfo = (a2b_App_t*)userData;
-
+	A2B_APP_LOG("a2bapp_onPowerFault\n\r");
 	if (pAppInfo->discoveryDone)
 	{
-		A2B_APP_LOG("\n\r Post Discovery Line fault: ");
+		A2B_APP_LOG("\tPost Discovery Line fault: ");
 
 	}
 	else
 	{
 
-		A2B_APP_LOG("\n\r Line fault During Discovery: ");
+		A2B_APP_LOG("\tLine fault During Discovery: ");
 
 	}
 	LD_Red_time = 3000;
@@ -1533,7 +1535,7 @@ a2b_HResult a2bapp_pluginsUnload(struct a2b_PluginApi* plugins, a2b_UInt16 numPl
 {
 	A2B_UNUSED(numPlugins);
 	A2B_UNUSED(ecb);
-
+	A2B_APP_LOG("a2bapp_pluginsUnload\n\r");
 	free(plugins);
 	return 0u;
 }

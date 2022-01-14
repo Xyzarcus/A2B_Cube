@@ -174,7 +174,8 @@ void adi_a2b_BertIntiation(a2b_UInt8 *pBertConfigBuffer, a2b_Plugin*  pPlugin)
 	wBuf[1u] = 0x00u;
 	status = a2b_i2cMasterWrite( pPlugin->ctx, 2, wBuf );
 	/* Delay for new structure to take effect */
-	a2b_ActiveDelay(pPlugin->ctx, 5u);
+	//a2b_ActiveDelay(pPlugin->ctx, 5u);
+	HAL_Delay(5u);
 
 	/* Re-enable Both up and down-stream */
 	wBuf[0u] = A2B_REG_DATCTL;
@@ -422,7 +423,8 @@ void adi_a2b_BertStop(a2b_Plugin*  pPlugin)
 	status = a2b_i2cMasterWrite( pPlugin->ctx, 2, wBuf );
 
     /* Delay for new structure to take effect - minimum of 5 super frames */
-	a2b_ActiveDelay(pPlugin->ctx, 5u);
+	//a2b_ActiveDelay(pPlugin->ctx, 5u);
+	HAL_Delay(5u);
 
     /* Re-enable Both up and down-stream */
 	wBuf[0u] = A2B_REG_DATCTL;

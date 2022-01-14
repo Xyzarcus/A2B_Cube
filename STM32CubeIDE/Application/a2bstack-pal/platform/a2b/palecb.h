@@ -66,7 +66,7 @@ typedef struct a2b_PalEcb
      * implementation.
      */
 	a2b_Handle                       i2chnd;
-	ADI_A2B_TIMER_HANDLER            oTimerHandler;
+//	ADI_A2B_TIMER_HANDLER            oTimerHandler;
 	uint64_t                         nCurrTime;
 //	struct a2b_StackContext*         Appctx;
 	a2b_Int32						 nChainIndex;

@@ -6,7 +6,7 @@ and its licensors.
 * @file: adi_a2b_busconfig.c
 * @brief: This file contains A2B Schematic information
 * @version: $Revision$
-* @date: Wednesday, January 12, 2022-6:50:39 PM
+* @date: Friday, January 14, 2022-4:50:16 PM
 * BCF Version - 1.0.0
 * A2B DLL version- 19.3.0
 * A2B Stack DLL version- 19.3.0.0
@@ -31,6 +31,7 @@ static ADI_A2B_MASTER_SLAVE_CONFIG sChainConfig0;
 static ADI_A2B_MASTER_NCD sMasterNode0;
 static ADI_A2B_SLAVE_NCD sChain0_SlaveNode0;
 static A2B_PERIPHERAL_DEVICE_CONFIG  Target_PeriConfig0;
+static A2B_PERIPHERAL_DEVICE_CONFIG  Target_PeriConfig1;
 static A2B_PERIPHERAL_DEVICE_CONFIG  sChain0_Slave0_PeriConfig0;
 static ADI_A2B_PERI_CONFIG_UNIT  gaPeriCfg_0_70_Unit[2];
 static A2B_PERIPHERAL_DEVICE_CONFIG  sChain0_Slave0_PeriConfig1;
@@ -57,13 +58,13 @@ ADI_A2B_BCD sBusDescription =
 		.nDiscoveryStartDelay     = 25,
 
 		/*  Enable/Disable  Line diagnostics (Post discovery) */ 
-		.bLineDiagnostics   = ENABLED/*DISABLED*/,
+		.bLineDiagnostics   = ENABLED,
 
 		/*  Enable/Disable automatic discovery upon critical faults (during discovery process) */ 
 		.bAutoDiscCriticalFault = ENABLED,
 
 		/*  Number of automatic discovery attempts (during discovery process) */ 
-		.nAttemptsCriticalFault = 10 /*0*/,
+		.nAttemptsCriticalFault = 10,
 
 		/* Auto-rediscovery upon post discovery line fault */ 
 		.bAutoRediscOnFault = ENABLED,
@@ -72,10 +73,10 @@ ADI_A2B_BCD sBusDescription =
 		.nRediscInterval = 100,
 
 		/*! Number of peripheral devices connected to Target */
-		.nNumPeriDevice = 1,
+		.nNumPeriDevice = 2,
 
 		/*! Array of peripheral configuration pointers */
- 		.apPeriConfig = { 	&Target_PeriConfig0, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR }
+ 		.apPeriConfig = { 	&Target_PeriConfig0, &Target_PeriConfig1, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR }
  	}, 
 
  };
@@ -111,10 +112,10 @@ static ADI_A2B_MASTER_SLAVE_CONFIG sChainConfig0=
 		.bEnableUpstream = ENABLED, 
 
 		/*! Down slot size */ 
-		.nDwnSlotSize = A2B_DNSLOT_SIZE_24, 
+		.nDwnSlotSize = A2B_DNSLOT_SIZE_16, 
 
  		/*! Up slot size  */ 
-		.nUpSlotSize = A2B_UPSLOT_SIZE_24 ,
+		.nUpSlotSize = A2B_UPSLOT_SIZE_16 ,
 
  		/*! Floating point compression for upstream  */ 
 		.bUpstreamCompression  = DISABLED,
@@ -175,10 +176,10 @@ static ADI_A2B_MASTER_NCD sMasterNode0=
 		.nTDMMode			= A2B_TDM2 ,
 
 		/*! TDM channel size  */
-		.nTDMChSize			= A2B_32BIT_TDM ,
+		.nTDMChSize			= A2B_16BIT_TDM ,
 
 		/*! SYNC mode - Pulse/50% duty cycle   */
-		.nSyncMode			= A2B_PULSE_SYNC ,
+		.nSyncMode			= A2B_ALTERNATE_SYNC ,
 
 		/*! SYNC Polarity- Rising/Falling edge */
 		.nSyncPolarity		= RAISING_EDGE ,
@@ -232,16 +233,16 @@ static ADI_A2B_MASTER_NCD sMasterNode0=
 		.bI2CEarlyAck		= DISABLED ,
 
 		/*! Response cycles  */
-		.nRespCycle			= 0x7Eu ,
+		.nRespCycle			= 0x79u ,
 
 		/*! Pass up slots */
-		.nPassUpSlots		= 0x0u ,
+		.nPassUpSlots		= 0x1u ,
 
 		/*! Pass down slots */
-		.nPassDwnSlots		= 0x1u ,
+		.nPassDwnSlots		= 0x0u ,
 
 		/*! Data control for Master */
-		.nDatctrl		= 0x3u ,
+		.nDatctrl		= 0x23u ,
 
 	},
 	.sGPIOSettings =
@@ -255,7 +256,7 @@ static ADI_A2B_MASTER_NCD sMasterNode0=
 			.bGPIO2PinUsage	= A2B_GPIO_2_DISABLE ,
 
 			/*! GPIO 3 Pin multiplexing */
-			.bGPIO3PinUsage	= A2B_GPIO_3_DISABLE ,
+			.bGPIO3PinUsage	= A2B_GPIO_3_AS_DTX0 ,
 
 			/*! GPIO 4 Pin multiplexing */
 			.bGPIO4PinUsage	= A2B_GPIO_4_DISABLE ,
@@ -675,7 +676,7 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode0=
 		.nNumSlotsPDM0		= A2B_PDM0SLOTS_1 ,
 
 		/*! Number of PDM1 slots  */
-		.nNumSlotsPDM1		= A2B_PDM1SLOTS_2 ,
+		.nNumSlotsPDM1		= A2B_PDM1SLOTS_1 ,
 
 		/*! Use High Pass Filter  */
 		.bHPFUse		= DISABLED ,
@@ -696,7 +697,7 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode0=
 		.bPDM1FallingEdgeFrst		= DISABLED ,
 
 		/*! PDM Destination */
-		.ePDMDestination		= A2B_BUS_ONLY ,
+		.ePDMDestination		= A2B_BUS_AND_LOCAL_TX ,
 
 	},
 
@@ -706,7 +707,7 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode0=
 		.nI2CFrequency		= A2B_I2C_100kHz ,
 
 		/*! Response cycles  */
-		.nRespCycle			= 0x7Eu ,
+		.nRespCycle			= 0x79u ,
 
 		/*! Expected super/audio frame rate */
 		.nSuperFrameRate	= A2B_SFF_RATE_48_0kHz ,
@@ -715,10 +716,10 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode0=
 		.nBroadCastSlots	= 0x0u ,
 
 		/*! Local down slots */
-		.nLocalDwnSlotsConsume		= 0x1u ,
+		.nLocalDwnSlotsConsume		= 0x0u ,
 
 		/*! Local Up slots */
-		.nLocalUpSlotsContribute		= 0x0u ,
+		.nLocalUpSlotsContribute		= 0x1u ,
 
 		/*! Pass up slots */
 		.nPassUpSlots		= 0x0u ,
@@ -744,7 +745,7 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode0=
 		.bUseDwnslotConsumeMasks		= ENABLED ,
 
 		/*! Array of downstream  masks */ 
-		.anDwnstreamConsumeSlots = { SLOT_0_ENABLED, SLOT_1_DISABLED, SLOT_2_DISABLED, SLOT_3_DISABLED, SLOT_4_DISABLED, SLOT_5_DISABLED, SLOT_6_DISABLED, SLOT_7_DISABLED, 
+		.anDwnstreamConsumeSlots = { SLOT_0_DISABLED, SLOT_1_DISABLED, SLOT_2_DISABLED, SLOT_3_DISABLED, SLOT_4_DISABLED, SLOT_5_DISABLED, SLOT_6_DISABLED, SLOT_7_DISABLED, 
  									 SLOT_8_DISABLED, SLOT_9_DISABLED, SLOT_10_DISABLED, SLOT_11_DISABLED, SLOT_12_DISABLED, SLOT_13_DISABLED, SLOT_14_DISABLED, SLOT_15_DISABLED, 
  									 SLOT_16_DISABLED, SLOT_17_DISABLED, SLOT_18_DISABLED, SLOT_19_DISABLED, SLOT_20_DISABLED, SLOT_21_DISABLED, SLOT_22_DISABLED, SLOT_23_DISABLED, 
  									 SLOT_24_DISABLED, SLOT_25_DISABLED, SLOT_26_DISABLED, SLOT_27_DISABLED, SLOT_28_DISABLED, SLOT_29_DISABLED, SLOT_30_DISABLED, SLOT_31_DISABLED},
@@ -757,7 +758,7 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode0=
 		.sPinMuxSettings =
 		{
 			/*! GPIO 0 Pin multiplexing */
-			.bGPIO0PinUsage	= A2B_GPIO_0_INPUT ,
+			.bGPIO0PinUsage	= A2B_GPIO_0_DISABLE ,
 
 			/*! GPIO 1 Pin multiplexing */
 			.bGPIO1PinUsage	= A2B_GPIO_1_DISABLE ,
@@ -783,10 +784,10 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode0=
 		.sPinIntConfig =
 		{
 			/*! Enable GPIO 0 Input pin interrupt  */
-			.bGPIO0Interrupt	= ENABLED ,
+			.bGPIO0Interrupt	= DISABLED ,
 
 			/*! Interrupt polarity - GPIO 0 Input pin  */
-			.bGPIO0IntPolarity	= FALLING_EDGE ,
+			.bGPIO0IntPolarity	= RAISING_EDGE ,
 
 			/*! Enable GPIO 1 Input pin interrupt  */
 			.bGPIO1Interrupt	= DISABLED ,
@@ -1147,6 +1148,50 @@ static A2B_PERIPHERAL_DEVICE_CONFIG  Target_PeriConfig0=
 
 	/* No of Rx0 channels  */ 
 	.nChRx0 = 0, 
+
+	/* No of Tx1 channels  */ 
+	.nChTx1 = 0, 
+
+	/* No of Rx1 channels  */ 
+	.nChRx1 = 0, 
+
+	/* Number of configuration units  */ 
+	.nNumPeriConfigUnit = 0, 
+
+	.paPeriConfigUnit = NULL_PTR 
+ };
+
+/* Peripheral - 1*/
+
+ADI_A2B_MEM_BCF_DATA
+static A2B_PERIPHERAL_DEVICE_CONFIG  Target_PeriConfig1=
+{
+ /*! I2C interface status  */ 
+	 .bI2CInterfaceUse = ENABLED, 
+
+	/*7 bit I2C address */ 
+	.nI2Caddr = 0x50, 
+
+	/* Device type -audio source/sink/host  */ 
+	.eDeviceType = A2B_AUDIO_HOST, 
+
+	/* Tx0 Pin in use */
+	.bUseTx0 = DISABLED, 
+
+	/* Rx0 Pin in use */
+	.bUseRx0 = DISABLED, 
+
+	/* Tx1 Pin in use */
+	.bUseTx1 = DISABLED, 
+
+	/* Rx1 Pin in use */
+	.bUseRx1 = DISABLED, 
+
+	/* No of Tx0 channels  */ 
+	.nChTx0 = 0, 
+
+	/* No of Rx0 channels  */ 
+	.nChRx0 = 1, 
 
 	/* No of Tx1 channels  */ 
 	.nChTx1 = 0, 

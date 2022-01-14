@@ -167,6 +167,7 @@
 #define A2B_FEATURE_COMM_CH
 
 
+//#define ENABLE_INTRRUPT_PROCESS
 
 #endif /* not A2B_FEATURE_ENV_OVERRIDE */
 

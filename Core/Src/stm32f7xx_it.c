@@ -44,7 +44,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-//static
+/*static*/
 extern volatile a2b_PalEcb* pPalEcb;
 extern a2b_App_t gApp_Info;
 
@@ -238,21 +238,18 @@ void TIM1_UP_TIM10_IRQHandler(void)
 	  HAL_GPIO_WritePin(LD_Blue_GPIO_Port, LD_Blue_Pin, GPIO_PIN_RESET);
 
 
-
+  pPalEcb->nCurrTime += 1u;
 
   if (time5ms == 5)//(time10ms == 10)
   {
 	  HAL_GPIO_WritePin(LD_Blue_GPIO_Port, LD_Blue_Pin, GPIO_PIN_SET);
 	  time5ms=0;//time10ms=0;
-	  a2b_stackTick(gApp_Info.ctx);
+	  //a2b_stackTick(gApp_Info.ctx);
 	  HAL_GPIO_WritePin(LD_Blue_GPIO_Port, LD_Blue_Pin, GPIO_PIN_RESET);
   }
   time5ms++;//time10ms++;
 
 
-
-  //adi_a2b_TimerCallback();
-//  pPalEcb->nCurrTime += 1u;
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
 }
 
