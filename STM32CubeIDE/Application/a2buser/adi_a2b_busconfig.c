@@ -6,7 +6,7 @@ and its licensors.
 * @file: adi_a2b_busconfig.c
 * @brief: This file contains A2B Schematic information
 * @version: $Revision$
-* @date: Tuesday, January 18, 2022-2:36:30 PM
+* @date: Tuesday, January 18, 2022-4:54:12 PM
 * BCF Version - 1.0.0
 * A2B DLL version- 19.3.0
 * A2B Stack DLL version- 19.3.0.0
@@ -64,13 +64,13 @@ ADI_A2B_BCD sBusDescription =
 		.bLineDiagnostics   = ENABLED,
 
 		/*  Enable/Disable automatic discovery upon critical faults (during discovery process) */ 
-		.bAutoDiscCriticalFault = ENABLED,
+		.bAutoDiscCriticalFault = DISABLED,
 
 		/*  Number of automatic discovery attempts (during discovery process) */ 
 		.nAttemptsCriticalFault = 10,
 
 		/* Auto-rediscovery upon post discovery line fault */ 
-		.bAutoRediscOnFault = ENABLED,
+		.bAutoRediscOnFault = DISABLED,
 
 		/*! Interval (in milliseconds) between re-discovery attempt */ 
 		.nRediscInterval = 100,
@@ -707,7 +707,7 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode0=
 	.sConfigCtrlSettings =
 	{
 		/*! I2C interface frequency */
-		.nI2CFrequency		= A2B_I2C_100kHz ,
+		.nI2CFrequency		= A2B_I2C_400kHz ,
 
 		/*! Response cycles  */
 		.nRespCycle			= 0x77u ,
@@ -1250,7 +1250,7 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode1=
 	.sConfigCtrlSettings =
 	{
 		/*! I2C interface frequency */
-		.nI2CFrequency		= A2B_I2C_100kHz ,
+		.nI2CFrequency		= A2B_I2C_400kHz ,
 
 		/*! Response cycles  */
 		.nRespCycle			= 0x73u ,
