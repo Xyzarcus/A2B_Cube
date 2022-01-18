@@ -25,6 +25,23 @@
 #include "adi_a2b_externs.h"
 #include "a2bapp.h"
 
+#include "string.h"
+#include "a2bplugin-slave/adi_a2b_periconfig.h"
+#include "a2b/regdefs.h"
+#include "a2bplugin-slave/plugin.h"
+#include "plugin_priv.h"
+#include "a2b/stack.h"
+#include "a2b/i2c.h"
+#include "a2b/error.h"
+#include "adi_a2b_datatypes.h"
+#include "a2b/timer.h"
+#include "a2b/util.h"
+#include "a2b/trace.h"
+#include "a2b/interrupt.h"
+#include "a2b/i2c.h"
+#include "a2b/timer.h"
+#include "a2b/regdefs.h"
+#include "a2b/seqchart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -263,6 +280,8 @@ void EXTI15_10_IRQHandler(void)
   /* USER CODE END EXTI15_10_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(USER_Btn_Pin);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+  uint8_t wBuf[]={0x21,0x0C};
+  a2b_i2cPeriphWrite(gApp_Info.ctx, 1, 0x11, 2, wBuf);
 
   /* USER CODE END EXTI15_10_IRQn 1 */
 }
