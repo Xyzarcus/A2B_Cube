@@ -6,7 +6,7 @@ and its licensors.
 * @file: adi_a2b_busconfig.c
 * @brief: This file contains A2B Schematic information
 * @version: $Revision$
-* @date: Tuesday, January 18, 2022-4:54:12 PM
+* @date: Tuesday, January 18, 2022-5:49:50 PM
 * BCF Version - 1.0.0
 * A2B DLL version- 19.3.0
 * A2B Stack DLL version- 19.3.0.0
@@ -707,7 +707,7 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode0=
 	.sConfigCtrlSettings =
 	{
 		/*! I2C interface frequency */
-		.nI2CFrequency		= A2B_I2C_400kHz ,
+		.nI2CFrequency		= A2B_I2C_100kHz ,
 
 		/*! Response cycles  */
 		.nRespCycle			= 0x77u ,
@@ -1250,7 +1250,7 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode1=
 	.sConfigCtrlSettings =
 	{
 		/*! I2C interface frequency */
-		.nI2CFrequency		= A2B_I2C_400kHz ,
+		.nI2CFrequency		= A2B_I2C_100kHz ,
 
 		/*! Response cycles  */
 		.nRespCycle			= 0x73u ,

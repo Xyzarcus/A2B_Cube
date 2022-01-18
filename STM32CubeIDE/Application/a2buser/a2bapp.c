@@ -1150,7 +1150,7 @@ static void a2bapp_onDiscoveryComplete(struct a2b_Msg* msg, a2b_Bool isCancelled
 			{
 				LD_Red_time = 1500;
 
-				A2B_APP_LOG("\n\rDiscovery failed!\n\r");
+				A2B_APP_LOG("\tDiscovery failed!\n\r");
 
 				pApp_Info->discoverySuccessful = false;
 				if (((results->resp.status & 0xFFFF) == A2B_EC_CUSTOM_NODE_ID_AUTH) || (results->resp.status & 0xFFFF) == A2B_EC_CUSTOM_NODE_ID_TIMEOUT)
