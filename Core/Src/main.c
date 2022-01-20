@@ -212,6 +212,35 @@ int main(void)
 	HAL_Delay(100);
 	a2b_i2cMasterWriteRead(gApp_Info.ctx, 1, &err_reg, 1, &err_answ);
 
+
+//	#define A2B_MSG_MY_MESSAGE (A2B_MSGREQ_CUSTOM + 1)
+//
+//	struct a2b_Msg *msg;
+//	a2b_HResult result;
+//	a2b_UInt32 *data;
+//	a2b_UInt16 slaveNode = 1;
+//
+//	msg = a2b_msgAlloc(a2b>ctx, A2B_MSG_REQUEST, A2B_MSG_MY_MESSAGE);
+//	if (msg != A2B_NULL)
+//	{
+//		data = (a2b_UInt32 *)a2b_msgGetPayload(msg);
+//		*data = 0xABCDABCD;
+//		result = a2b_msgRtrSendRequest(msg, slaveNode, NULL);
+//		a2b_msgUnref(msg);
+//	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 	//adi_a2b_PeriheralConfig(struct a2b_Plugin* plugin, ADI_A2B_NODE_PERICONFIG *pPeriConfig);
 //	if(gbPb1Pressed == true)
 //	{
@@ -417,133 +446,6 @@ static void a2b_HandleCommChRxMsg(uint8 nMsgId, uint16 nMsgLenInBytes, uint8* pM
 //    }
 //}
 
-
-static void a2bapp_keyPressed(struct a2b_Msg* msg, a2b_Bool isCancelled)
-{
-	a2b_NetDiscovery* results;
-//	a2b_Bool discDone;
-
-	if ( A2B_NULL == msg)
-	{
-
-		/* This should *never* happen */
-		A2B_APP_LOG("Error: no msg\n\r");
-
-	}
-	else
-	{
-		a2b_App_t *pApp_Info = a2b_msgGetUserData(msg);
-//		pApp_Info->discoveryDone = true;
-//
-//		if (isCancelled)
-//		{
-
-			LD_Blue_time = 500;
-
-			A2B_APP_LOG("Key Signal.\n\r");
-
-//		}
-//		else
-//		{
-//			results = (a2b_NetDiscovery*)a2b_msgGetPayload(msg);
-//			if (A2B_SUCCEEDED(results->resp.status))
-//			{
-//				LD_Green_time = 500;
-//
-//				A2B_APP_LOG("Discovery succeeded with %d nodes discovered\n\r", results->resp.numNodes);
-//
-//				pApp_Info->discoverySuccessful = true;
-//				pApp_Info->nodesDiscovered = results->resp.numNodes;
-//
-//				/* When line fault monitoring is enabled, Allocate a timer to periodically clear BECNT register to reset the error counter */
-//				if ((pApp_Info->bBecovfTimerEnable == A2B_FALSE) && (pApp_Info->pTargetProperties->bLineDiagnostics == 1))
-//				{
-//
-//					pApp_Info->hTmrToHandleBecovf = a2b_timerAlloc(pApp_Info->ctx, (a2b_TimerFunc)a2b_app_handle_becovf, (a2b_Handle)(pApp_Info));
-//					pApp_Info->bBecovfTimerEnable = A2B_TRUE;
-//
-//					a2b_timerSet(pApp_Info->hTmrToHandleBecovf, A2B_APP_TMRTOHANDLE_BECOVF_AFTER_INTERVAL, A2B_APP_TMRTOHANDLE_BECOVF_REPEAT_INTERVAL);
-//					a2b_timerStart(pApp_Info->hTmrToHandleBecovf);
-//				}
-//				/* If power fault was detected earlier clear flags and attempt count */
-//
-//				pApp_Info->nDiscTryCnt = 0;
-//				pApp_Info->bfaultDone = A2B_FALSE;
-//
-//
-//			}
-//			else
-//			{
-//				LD_Red_time = 1500;
-//
-//				A2B_APP_LOG("\n\rDiscovery failed!\n\r");
-//
-//				pApp_Info->discoverySuccessful = false;
-//				if (((results->resp.status & 0xFFFF) == A2B_EC_CUSTOM_NODE_ID_AUTH) || (results->resp.status & 0xFFFF) == A2B_EC_CUSTOM_NODE_ID_TIMEOUT)
-//				{
-//					/* Supplier id authentication failure */
-//					pApp_Info->faultNode = results->resp.numNodes;
-//					pApp_Info->bCustomAuthFailed = true;
-//
-//				}
-//				if ((results->resp.status & 0xFFFF) == A2B_EC_PERMISSION)
-//				{
-//					/* Basic authentication failure */
-//
-//					pApp_Info->faultNode = results->resp.numNodes;
-//					pApp_Info->bCustomAuthFailed = true;
-//					A2B_APP_LOG("Node Authentication failed\n\r");
-//
-//				}
-//				/* Retry again if we are re-trying post power fault */
-//				if ((pApp_Info->bfaultDone == A2B_TRUE) && (pApp_Info->nDiscTryCnt < pApp_Info->pTargetProperties->nAttemptsCriticalFault))
-//				{
-//					pApp_Info->bRetry = A2B_TRUE;
-//				}
-//				/* If maximum attempts reached clear the post discovery fault flag */
-//				else if ((pApp_Info->bfaultDone == A2B_TRUE) && (pApp_Info->nDiscTryCnt == pApp_Info->pTargetProperties->nAttemptsCriticalFault))
-//				{
-//					pApp_Info->nDiscTryCnt = 0;
-//					pApp_Info->bfaultDone = A2B_FALSE;
-//
-//				}
-//			}
-//		}
-//
-//		/* Force the main loop to exit */
-//		discDone = A2B_TRUE;
-	}
-}
-
-
-static a2b_Int32 a2b_KeyCallback(a2b_App_t *pApp_Info)
-{
-//	a2b_NetDiscovery *discReq;
-	struct a2b_Msg *msg;
-	a2b_HResult result = 0;
-
-	/* Create a network discovery request message */
-	msg = a2b_msgAlloc(pApp_Info->ctx, A2B_MSG_NOTIFY/*A2B_MSG_REQUEST*/, A2B_MSGNOTIFY_CUSTOM/*A2B_MSGREQ_NET_DISCOVERY*/);
-
-	/* Attach the BDD information to the message */
-//	discReq = (a2b_NetDiscovery*)a2b_msgGetPayload(msg);
-//	discReq->req.bdd = &pApp_Info->bdd;
-
-	/* Add this context to the message */
-	a2b_msgSetUserData(msg, (a2b_Handle)pApp_Info, A2B_NULL);
-	result = a2b_msgRtrSendRequest(msg, A2B_NODEADDR_NOTUSED/*A2B_NODEADDR_MASTER*/, a2bapp_keyPressed);
-
-//#ifndef ENABLE_INTRRUPT_PROCESS
-//	a2b_Int32 pollTime = A2BAPP_POLL_PERIOD; //Interrupt polling interval in milliseconds.
-//
-//	/* Instruct the Stack to begin interrupt polling every 25mS */
-//	a2b_intrStartIrqPoll(pApp_Info->ctx, pollTime);
-//#endif
-	/* The message router adds its own reference to the submitted message. */
-	a2b_msgUnref(msg);
-
-	return result;
-}
 
 
 static

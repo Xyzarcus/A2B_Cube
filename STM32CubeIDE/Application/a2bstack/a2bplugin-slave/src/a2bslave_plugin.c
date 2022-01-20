@@ -617,6 +617,30 @@ a2b_pluginExecute
         	a2b_slave_getVerInfo((struct a2b_PluginVerInfo*)a2b_msgGetPayload(msg));
             break;
 
+        case A2B_MSGREQ_CUSTOM:
+        	A2B_APP_LOG("A2B_MSGREQ_CUSTOM\n\r");
+
+        	initMsg = (a2b_PluginInit*)a2b_msgGetPayload( msg );
+			initMsg->resp.status = A2B_RESULT_SUCCESS;
+
+//			if(initMsg->req.pNodePeriDeviceConfig != A2B_NULL)
+//			{
+//				pPeriConfig = (ADI_A2B_NODE_PERICONFIG (*)[])initMsg->req.pNodePeriDeviceConfig;
+//				plugin->pNodePeriDeviceConfig = &((*pPeriConfig)[((a2b_UInt32)nodeAddr + (a2b_UInt32)1)]);
+//
+//				nRes = adi_a2b_PeriheralConfig(plugin, plugin->pNodePeriDeviceConfig);
+//			}
+
+        	break;
+
+        case A2B_MSGREQ_CUSTOM+1:
+			A2B_APP_LOG("A2B_MSGREQ_CUSTOM+1\n\r");
+        	initMsg = (a2b_PluginInit*)a2b_msgGetPayload( msg );
+			initMsg->resp.status = A2B_RESULT_SUCCESS;
+
+
+			break;
+
         default:
             A2B_TRACE2((ctx, (A2B_TRC_DOM_PLUGIN | A2B_TRC_LVL_WARN),
                         "%s execute(%ld): Unhandled command",

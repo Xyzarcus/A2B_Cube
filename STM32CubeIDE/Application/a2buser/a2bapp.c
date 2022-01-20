@@ -979,11 +979,12 @@ a2b_UInt32 a2b_fault_monitor(a2b_App_t *pApp_Info)
 	/* If line diagnostics enabled and non-zero re-attempts configured */
 	if ((pApp_Info->pTargetProperties->bLineDiagnostics == 1) && (pApp_Info->pTargetProperties->nAttemptsCriticalFault != 0))
 	{
+		A2B_APP_LOG("a2b_fault_monitor\r\n");
 		/* If fault has occurred  */
 		if ((pApp_Info->bRetry == A2B_TRUE) && (pApp_Info->bfaultDone == A2B_TRUE))
 		{
 
-			A2B_APP_LOG("fault found \r\n");
+
 
 			pApp_Info->bRetry = A2B_FALSE;
 			nChainIndex = pApp_Info->ecb.palEcb.nChainIndex;
@@ -1046,7 +1047,7 @@ static void a2bapp_onInterrupt(struct a2b_Msg* msg, a2b_Handle userData)
 
 	a2b_App_t *pApp_Info  = (a2b_App_t *)userData;
 
-	A2B_APP_LOG("a2bapp_onInterrupt\n\r");
+	A2B_APP_LOG("a2bapp_onInterrupt\t");
 	LD_Blue_time=300;
 
 	if (msg)
@@ -1058,8 +1059,153 @@ static void a2bapp_onInterrupt(struct a2b_Msg* msg, a2b_Handle userData)
 			if (interrupt)
 			{
 
-				A2B_APP_LOG("\tINTERRUPT: intrType=%u nodeAddr=%d\n\r", interrupt->intrType, interrupt->nodeAddr);
+				A2B_APP_LOG("\tintrType=%u nodeAddr=%d \t", interrupt->intrType, interrupt->nodeAddr);
 				/* Add your code to handle interrupt */
+
+				switch (interrupt->intrType)
+				{
+					case A2B_ENUM_INTTYPE_HDCNTERR:
+						A2B_APP_LOG("HDCNTERR\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_DDERR:
+						A2B_APP_LOG("DDERR\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_CRCERR:
+						A2B_APP_LOG("CRCERR\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_DPERR:
+						A2B_APP_LOG("DPERR\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_BECOVF:
+						A2B_APP_LOG("BECOVF\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_SRFERR:
+						A2B_APP_LOG("SRFERR\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_PWRERR_CS_GND:
+						A2B_APP_LOG("PWRERR (Cable Shorted to GND)\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_PWRERR_CS_VBAT:
+						A2B_APP_LOG("PWRERR (Cable Shorted to VBat)\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_PWRERR_CS:
+						A2B_APP_LOG("PWRERR (Cable Shorted Together)\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_PWRERR_CDISC:
+						A2B_APP_LOG("PWRERR (Cable Disconnected or Open Circuit)\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_PWRERR_CREV:
+						A2B_APP_LOG("PWRERR (Cable Reverse Connected)\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_PWRERR_FAULT:
+						A2B_APP_LOG("PWRERR (Indeterminate Fault)\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_IO0PND:
+						A2B_APP_LOG("A2B_ENUM_INTTYPE_IO0PND\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_IO1PND:
+						A2B_APP_LOG("A2B_ENUM_INTTYPE_IO1PND\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_IO2PND:
+						A2B_APP_LOG("A2B_ENUM_INTTYPE_IO2PND\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_IO3PND:
+						A2B_APP_LOG("A2B_ENUM_INTTYPE_IO3PND\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_IO4PND:
+						A2B_APP_LOG("A2B_ENUM_INTTYPE_IO4PND\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_IO5PND:
+						A2B_APP_LOG("A2B_ENUM_INTTYPE_IO5PND\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_IO6PND:
+						A2B_APP_LOG("A2B_ENUM_INTTYPE_IO6PND\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_IO7PND:
+						A2B_APP_LOG("A2B_ENUM_INTTYPE_IO7PND\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_DSCDONE:
+						A2B_APP_LOG("DSCDONE - Master Only\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_I2CERR:
+						A2B_APP_LOG("I2CERR - Master Only\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_ICRCERR:
+						A2B_APP_LOG("ICRCERR - Master Only\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_PWRERR_NLS_GND:
+						A2B_APP_LOG("PWRERR - Non-Localized Short to GND\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_PWRERR_NLS_VBAT:
+						A2B_APP_LOG("PWRERR - Non-Localized Short to VBat\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_MBOX0_FULL:
+						A2B_APP_LOG("Mailbox 0 full\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_MBOX0_EMPTY:
+						A2B_APP_LOG("Mailbox 0 empty\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_MBOX1_FULL:
+						A2B_APP_LOG("Mailbox 1 full\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_MBOX1_EMPTY:
+						A2B_APP_LOG("Mailbox 1 empty\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_IRPT_MSG_ERR:
+						A2B_APP_LOG("PWRERR - Interrupt Messaging Error\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_STRTUP_ERR_RTF:
+						A2B_APP_LOG("Startup Error - Return to Factory\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_SLAVE_INTTYPE_ERR:
+						A2B_APP_LOG("Slave INTTYPE Read Error - Master Only\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_STANDBY_DONE:
+						A2B_APP_LOG("Standby Done - Master Only\n\r");
+
+						break;
+					case A2B_ENUM_INTTYPE_MSTR_RUNNING:
+						A2B_APP_LOG("MSTR_RUNNING - Master Only\n\r");
+
+						break;
+
+					default:
+						A2B_APP_LOG("Unknown\n\r");
+
+						break;
+				}
 
 			}
 			else
@@ -1096,7 +1242,7 @@ static void a2bapp_onDiscoveryComplete(struct a2b_Msg* msg, a2b_Bool isCancelled
 {
 	a2b_NetDiscovery* results;
 	a2b_Bool discDone;
-	A2B_APP_LOG("a2bapp_onDiscoveryComplete\n\r");
+	A2B_APP_LOG("a2bapp_onDiscoveryComplete\t");
 	if ( A2B_NULL == msg)
 	{
 
@@ -1214,7 +1360,7 @@ static void a2bapp_onPowerFault(struct a2b_Msg *msg, a2b_Handle userData)
 	a2b_PowerFault *fault;
 
 	a2b_App_t * pAppInfo = (a2b_App_t*)userData;
-	A2B_APP_LOG("a2bapp_onPowerFault\n\r");
+	A2B_APP_LOG("a2bapp_onPowerFault\t");
 	if (pAppInfo->discoveryDone)
 	{
 		A2B_APP_LOG("\tPost Discovery Line fault: ");
@@ -1377,28 +1523,28 @@ static void a2bapp_onGpioInterrupt(struct a2b_Msg* msg, a2b_Handle userData)
 
 	a2b_App_t *pApp_Info  = (a2b_App_t *)userData;
 
-	A2B_APP_LOG("GPIO irq\n\r");		//lego
+	A2B_APP_LOG("a2bapp_onGpioInterrupt\t");
 	LD_Blue_time=300;
 
 	if (msg)
 	{
 		interrupt = a2b_msgGetPayload(msg);
 
-//		if (pApp_Info->bDebug)
-//		{
-//			if (interrupt)
-//			{
-//
-//				A2B_APP_LOG("INTERRUPT: intrType=%u nodeAddr=%d\n\r", interrupt->intrType, interrupt->nodeAddr);
-//				/* Add your code to handle interrupt */
-//
-//			}
-//			else
-//			{
-//
-//				A2B_APP_LOG("INTERRUPT: failed to retrieve payload\n\r");
-//			}
-//		}
+		if (pApp_Info->bDebug)
+		{
+			if (interrupt)
+			{
+
+				A2B_APP_LOG(" intrType=%u nodeAddr=%d\n\r", interrupt->intrType, interrupt->nodeAddr);
+				/* Add your code to handle interrupt */
+
+			}
+			else
+			{
+
+				A2B_APP_LOG(" failed to retrieve payload\n\r");
+			}
+		}
 	}
 }
 
@@ -1616,7 +1762,7 @@ static a2b_HResult a2b_AppDetectBusDrop(a2b_App_t *pApp_Info)
 			pApp_Info->bfaultDone = A2B_TRUE;
 			pApp_Info->bRetry = A2B_TRUE;
 
-			A2B_APP_LOG("\n\r Bus Drop Detected @ Node: %d", i-1);
+			A2B_APP_LOG("Bus Drop Detected @ Node: %d \n\r", i-1);
 
 			break;
 		}
