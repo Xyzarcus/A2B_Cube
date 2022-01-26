@@ -319,69 +319,6 @@ void SysTick_Handler(void)
 
   }
 
-//  if (enc_right)
-//	  enc_right_cnt++;
-//  if (enc_right_cnt>15)
-//  {
-//	  enc_right_cnt=0;
-//	  enc_right=false;
-//	  enc_left=false;
-//	printf("ENC_R\t");
-//
-//	struct a2b_Msg *msg;
-//	a2b_HResult result;
-//	//a2b_UInt32 *data;
-//
-//	a2b_UInt16 slaveNode = 1;
-//	a2b_radioEventInfo* radioEvt;
-//
-//	msg = a2b_msgAlloc(gApp_Info.ctx, A2B_MSG_REQUEST, A2B_MSGREQ_CUSTOM2);
-//	if (msg != A2B_NULL)
-//	{
-//		if (vol[5]<63)
-//			vol[5]++;
-//		printf("%d\t",vol[5]);
-//		//data = (a2b_UInt32 *)a2b_msgGetPayload(msg);
-//		//*data = 0xABCDABCD;
-//		radioEvt->pwBuf=vol;
-//		radioEvt->nDataSz= 6;
-//		a2b_msgSetUserData(msg, radioEvt, A2B_NULL);
-//		result = a2b_msgRtrSendRequest(msg, slaveNode, NULL);
-//		a2b_msgUnref(msg);
-//	}
-//  }
-//
-//  if (enc_left)
-//	  enc_left_cnt++;
-//  if (enc_left_cnt>15)
-//  {
-//	  enc_left_cnt=0;
-//	  enc_left=false;
-//	enc_right=false;
-//	printf("ENC_L\t");
-//
-//	struct a2b_Msg *msg;
-//	a2b_HResult result;
-//	//a2b_UInt32 *data;
-//	a2b_UInt16 slaveNode = 1;
-//	a2b_radioEventInfo* radioEvt;
-//
-//	msg = a2b_msgAlloc(gApp_Info.ctx, A2B_MSG_REQUEST, A2B_MSGREQ_CUSTOM2);
-//	if (msg != A2B_NULL)
-//	{
-//		//data = (a2b_UInt32 *)a2b_msgGetPayload(msg);
-//		//*data = 0xABCDABCD;
-//		if (vol[5]>0)
-//			vol[5]--;
-//		printf("%d\t",vol[5]);
-//		radioEvt->pwBuf=vol;
-//		radioEvt->nDataSz= 6;
-//		a2b_msgSetUserData(msg, radioEvt, A2B_NULL);
-//		result = a2b_msgRtrSendRequest(msg, slaveNode, NULL);
-//		a2b_msgUnref(msg);
-//	}
-//
-//  }
 
   /* USER CODE END SysTick_IRQn 1 */
 }
