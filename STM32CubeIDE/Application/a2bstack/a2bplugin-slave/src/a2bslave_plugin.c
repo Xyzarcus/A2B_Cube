@@ -624,29 +624,12 @@ a2b_pluginExecute
 
         case A2B_MSGREQ_CUSTOM2:
 
-
         	radioCtrl = a2b_msgGetUserData(msg);
 
-        	//A2B_APP_LOG("A2B_MSGREQ_CUSTOM2\t%d\n\r", radioCtrl->nDataSz);
-
-        	//initMsg = (a2b_PluginInit*)a2b_msgGetUserData( msg );
-        	//initMsg = (a2b_PluginInit*)a2b_msgGetPayload( msg );
-			//initMsg->resp.status = A2B_RESULT_SUCCESS;
         	uint8_t resp[]={0,0,0,0,0,0,0,0,0,0,0,0,0};
-			//a2b_i2cPeriphWrite(ctx, 1, 0x11, 2, seek_up);
-			//a2b_i2cPeriphWrite(ctx, 1, 0x11, radioCtrl->nDataSz, radioCtrl->pwBuf);
 			a2b_i2cPeriphWriteRead(ctx, 1, 0x11, radioCtrl->nDataSz, radioCtrl->pwBuf, 1, resp);
 
 			A2B_APP_LOG("A2B_MSGREQ_CUSTOM2\t0x%02X\n\r", resp[0]);
-
-//			if(initMsg->req.pNodePeriDeviceConfig != A2B_NULL)
-//			{
-//				A2B_APP_LOG("tempo\n\r");
-//				pPeriConfig = (ADI_A2B_NODE_PERICONFIG (*)[])initMsg->req.pNodePeriDeviceConfig;
-//				plugin->pNodePeriDeviceConfig = &((*pPeriConfig)[((a2b_UInt32)nodeAddr + (a2b_UInt32)1)]);
-//
-//				nRes = adi_a2b_PeriheralConfig(plugin, plugin->pNodePeriDeviceConfig);
-//			}
 
         	break;
 

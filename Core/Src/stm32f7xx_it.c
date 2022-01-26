@@ -88,9 +88,13 @@ extern TIM_HandleTypeDef htim10;
 bool enc_btn=false;
 uint16_t enc_btn_cnt = 0;
 bool enc_left=false, enc_right=false;
-uint16_t enc_left_cnt = 0, enc_right_cnt = 0;
+uint16_t enc_left_cnt = 0, enc_right_cnt = 0, enc_rotated_cnt = 0;
+bool enc_rotated = false;
 uint16_t enc_last = 5000;
 uint16_t enc_current = 5000;
+uint16_t enc_mark = 5000;
+int16_t enc_change = 0;
+
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -262,12 +266,19 @@ void SysTick_Handler(void)
 	}
   }
 
-  if (enc_right)
-  {
-	  enc_right=false;
-	  enc_left=false;
-	printf("ENC_R\t");
 
+  if (enc_rotated)
+	  enc_rotated_cnt++;
+  if (enc_rotated_cnt>15)
+  {
+	enc_rotated=false;
+	enc_rotated_cnt=0;
+	//printf("enc_mark=%d, enc_current=%d\t", enc_mark, enc_current);
+  	enc_change = enc_current-enc_mark;
+  	//printf("enc_change=%d\t", enc_change);
+  	enc_mark=enc_current;
+
+  	printf("ENC_ROT\t\t");
 
 	struct a2b_Msg *msg;
 	a2b_HResult result;
@@ -279,8 +290,21 @@ void SysTick_Handler(void)
 	msg = a2b_msgAlloc(gApp_Info.ctx, A2B_MSG_REQUEST, A2B_MSGREQ_CUSTOM2);
 	if (msg != A2B_NULL)
 	{
-		if (vol[5]<63)
-			vol[5]++;
+		if (enc_change>0)
+		{
+			if (vol[5]+enc_change<=63)
+				vol[5]+=enc_change;
+			else
+				vol[5]=63;
+
+		}
+		if (enc_change<0)
+		{
+			if (vol[5]+enc_change>=0)
+				vol[5]+=enc_change;
+			else
+				vol[5]=0;
+		}
 		printf("%d\t",vol[5]);
 		//data = (a2b_UInt32 *)a2b_msgGetPayload(msg);
 		//*data = 0xABCDABCD;
@@ -290,38 +314,74 @@ void SysTick_Handler(void)
 		result = a2b_msgRtrSendRequest(msg, slaveNode, NULL);
 		a2b_msgUnref(msg);
 	}
+
+
+
   }
 
-
-
-  if (enc_left)
-  {
-	  enc_left=false;
-	  enc_right=false;
-	printf("ENC_L\t");
-
-	struct a2b_Msg *msg;
-	a2b_HResult result;
-	//a2b_UInt32 *data;
-	a2b_UInt16 slaveNode = 1;
-	a2b_radioEventInfo* radioEvt;
-
-	msg = a2b_msgAlloc(gApp_Info.ctx, A2B_MSG_REQUEST, A2B_MSGREQ_CUSTOM2);
-	if (msg != A2B_NULL)
-	{
-		//data = (a2b_UInt32 *)a2b_msgGetPayload(msg);
-		//*data = 0xABCDABCD;
-		if (vol[5]>0)
-			vol[5]--;
-		printf("%d\t",vol[5]);
-		radioEvt->pwBuf=vol;
-		radioEvt->nDataSz= 6;
-		a2b_msgSetUserData(msg, radioEvt, A2B_NULL);
-		result = a2b_msgRtrSendRequest(msg, slaveNode, NULL);
-		a2b_msgUnref(msg);
-	}
-
-  }
+//  if (enc_right)
+//	  enc_right_cnt++;
+//  if (enc_right_cnt>15)
+//  {
+//	  enc_right_cnt=0;
+//	  enc_right=false;
+//	  enc_left=false;
+//	printf("ENC_R\t");
+//
+//	struct a2b_Msg *msg;
+//	a2b_HResult result;
+//	//a2b_UInt32 *data;
+//
+//	a2b_UInt16 slaveNode = 1;
+//	a2b_radioEventInfo* radioEvt;
+//
+//	msg = a2b_msgAlloc(gApp_Info.ctx, A2B_MSG_REQUEST, A2B_MSGREQ_CUSTOM2);
+//	if (msg != A2B_NULL)
+//	{
+//		if (vol[5]<63)
+//			vol[5]++;
+//		printf("%d\t",vol[5]);
+//		//data = (a2b_UInt32 *)a2b_msgGetPayload(msg);
+//		//*data = 0xABCDABCD;
+//		radioEvt->pwBuf=vol;
+//		radioEvt->nDataSz= 6;
+//		a2b_msgSetUserData(msg, radioEvt, A2B_NULL);
+//		result = a2b_msgRtrSendRequest(msg, slaveNode, NULL);
+//		a2b_msgUnref(msg);
+//	}
+//  }
+//
+//  if (enc_left)
+//	  enc_left_cnt++;
+//  if (enc_left_cnt>15)
+//  {
+//	  enc_left_cnt=0;
+//	  enc_left=false;
+//	enc_right=false;
+//	printf("ENC_L\t");
+//
+//	struct a2b_Msg *msg;
+//	a2b_HResult result;
+//	//a2b_UInt32 *data;
+//	a2b_UInt16 slaveNode = 1;
+//	a2b_radioEventInfo* radioEvt;
+//
+//	msg = a2b_msgAlloc(gApp_Info.ctx, A2B_MSG_REQUEST, A2B_MSGREQ_CUSTOM2);
+//	if (msg != A2B_NULL)
+//	{
+//		//data = (a2b_UInt32 *)a2b_msgGetPayload(msg);
+//		//*data = 0xABCDABCD;
+//		if (vol[5]>0)
+//			vol[5]--;
+//		printf("%d\t",vol[5]);
+//		radioEvt->pwBuf=vol;
+//		radioEvt->nDataSz= 6;
+//		a2b_msgSetUserData(msg, radioEvt, A2B_NULL);
+//		result = a2b_msgRtrSendRequest(msg, slaveNode, NULL);
+//		a2b_msgUnref(msg);
+//	}
+//
+//  }
 
   /* USER CODE END SysTick_IRQn 1 */
 }
@@ -411,14 +471,19 @@ void TIM3_IRQHandler(void)
   //printf("TIM3\r\n");
   //printf("%d\r\n",(int)__HAL_TIM_GET_COUNTER(&htim3));
   enc_current = (int)__HAL_TIM_GET_COUNTER(&htim3);
-  if (enc_current<enc_last)
+  if (enc_current!=enc_last)
   {
-	  enc_left=true;
+	  enc_rotated=true;
+
   }
-  else
-  {
-	  enc_right=true;
-  }
+//  if (enc_current<enc_last)
+//  {
+//	  enc_left=true;
+//  }
+//  else
+//  {
+//	  enc_right=true;
+//  }
   enc_last = enc_current;
 
   /* USER CODE END TIM3_IRQn 1 */
