@@ -68,6 +68,9 @@ extern uint16_t LD_Blue_time;
 #define USER_Btn_EXTI_IRQn EXTI15_10_IRQn
 #define MCO_Pin GPIO_PIN_0
 #define MCO_GPIO_Port GPIOH
+#define ENC_BTN_Pin GPIO_PIN_0
+#define ENC_BTN_GPIO_Port GPIOA
+#define ENC_BTN_EXTI_IRQn EXTI0_IRQn
 #define LD_Green_Pin GPIO_PIN_0
 #define LD_Green_GPIO_Port GPIOB
 #define LD_Red_Pin GPIO_PIN_14

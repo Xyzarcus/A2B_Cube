@@ -36,7 +36,9 @@
 #include "a2b/seqchart.h"
 #include "verinfo.h"
 
-
+#include <a2bapp.h>
+extern uint8_t vol[];
+extern uint8_t seek_up[];
 /*======================= D E F I N E S ===========================*/
 
 /* The amount of time (msec) used to simulate the time it would
@@ -528,6 +530,9 @@ a2b_pluginExecute
     a2b_PluginInit*             initMsg;
     a2b_Int16                   nodeAddr= a2b_msgGetDestNodeAddr(msg);
     a2b_HResult 				nRes;
+
+    a2b_radioEventInfo * radioCtrl;
+
 #ifdef ENABLE_PERI_CONFIG_BCF
     ADI_A2B_NODE_PERICONFIG (*pPeriConfig)[];  /* Pointer to an array of configuration */
 #endif
@@ -617,14 +622,26 @@ a2b_pluginExecute
         	a2b_slave_getVerInfo((struct a2b_PluginVerInfo*)a2b_msgGetPayload(msg));
             break;
 
-        case A2B_MSGREQ_CUSTOM:
-        	A2B_APP_LOG("A2B_MSGREQ_CUSTOM\n\r");
+        case A2B_MSGREQ_CUSTOM2:
 
-        	initMsg = (a2b_PluginInit*)a2b_msgGetPayload( msg );
-			initMsg->resp.status = A2B_RESULT_SUCCESS;
+
+        	radioCtrl = a2b_msgGetUserData(msg);
+
+        	A2B_APP_LOG("A2B_MSGREQ_CUSTOM2\t%d\n\r", radioCtrl->nDataSz);
+
+        	//initMsg = (a2b_PluginInit*)a2b_msgGetUserData( msg );
+        	//initMsg = (a2b_PluginInit*)a2b_msgGetPayload( msg );
+			//initMsg->resp.status = A2B_RESULT_SUCCESS;
+
+			//a2b_i2cPeriphWrite(ctx, 1, 0x11, 2, seek_up);
+			a2b_i2cPeriphWrite(ctx, 1, 0x11, radioCtrl->nDataSz, radioCtrl->pwBuf);
+
+
+
 
 //			if(initMsg->req.pNodePeriDeviceConfig != A2B_NULL)
 //			{
+//				A2B_APP_LOG("tempo\n\r");
 //				pPeriConfig = (ADI_A2B_NODE_PERICONFIG (*)[])initMsg->req.pNodePeriDeviceConfig;
 //				plugin->pNodePeriDeviceConfig = &((*pPeriConfig)[((a2b_UInt32)nodeAddr + (a2b_UInt32)1)]);
 //
@@ -633,8 +650,8 @@ a2b_pluginExecute
 
         	break;
 
-        case A2B_MSGREQ_CUSTOM+1:
-			A2B_APP_LOG("A2B_MSGREQ_CUSTOM+1\n\r");
+        case (A2B_MSGREQ_CUSTOM3):
+			A2B_APP_LOG("A2B_MSGREQ_CUSTOM3\n\r");
         	initMsg = (a2b_PluginInit*)a2b_msgGetPayload( msg );
 			initMsg->resp.status = A2B_RESULT_SUCCESS;
 

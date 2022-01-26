@@ -138,6 +138,12 @@
   */
 #define A2B_MSGREQ_CUSTOM                  (100u)
 
+#define A2B_MSGREQ_CUSTOM1                  (101u)
+
+#define A2B_MSGREQ_CUSTOM2                  (102u)
+
+#define A2B_MSGREQ_CUSTOM3                  (103u)
+
 /** \} -- a2bstack_msgtypes_msgreq */
 
 /*----------------------------------------------------------------------------*/
@@ -595,6 +601,18 @@ typedef struct a2b_CommChEventInfo{
 #endif	/* A2B_FEATURE_COMM_CH */
 
 /** \} -- a2bstack_msgtypes_notify */
+
+
+
+
+/**
+ * This is the request payload for A2B_MSGREQ_CUSTOM2 request.
+ */
+typedef struct a2b_radioEventInfo
+{
+	a2b_UInt8* 	pwBuf;
+	a2b_UInt8 	nDataSz;
+} a2b_radioEventInfo;
 
 
 /*======================= P U B L I C  P R O T O T Y P E S ========*/

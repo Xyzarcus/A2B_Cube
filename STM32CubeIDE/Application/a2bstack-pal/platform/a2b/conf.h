@@ -58,7 +58,7 @@
 
 /** Maximum number of A2B master nodes on this platform */
 #ifndef A2B_CONF_MAX_NUM_MASTER_NODES
-#define A2B_CONF_MAX_NUM_MASTER_NODES       (2u)/*(1u)*/
+#define A2B_CONF_MAX_NUM_MASTER_NODES       (1u)
 #endif
 
 #ifndef _TESSY_INCLUDES_

@@ -46,6 +46,7 @@
 #include "a2b/util.h"
 #include "jobexec.h"
 
+#include <a2bapp.h>
 /*======================= D E F I N E S ===========================*/
 
 /*======================= L O C A L  P R O T O T Y P E S  =========*/
@@ -455,6 +456,8 @@ a2b_msgRtrRegisterNotify
     {
         return A2B_NULL;
     }
+
+    //A2B_APP_LOG("a2b_msgRtrRegisterNotify\n\r");		//remove it later
 
     A2B_TRACE1((ctx, (A2B_TRC_DOM_MSGRTR | A2B_TRC_LVL_TRACE1),
                 "Enter: a2b_msgRtrRegisterNotify(0x%p)", ctx));

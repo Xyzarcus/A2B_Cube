@@ -17,9 +17,10 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "a2bapp.h"
 #include "main.h"
+#include "fatfs.h"
 #include "i2c.h"
+#include "sdmmc.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -40,7 +41,7 @@
 #include "adi_a2b_commch_interface.h"
 #include "adi_a2b_commch_appinterface.h"
 #include "plugin_priv.h"
-
+#include <a2bapp.h>
 
 /* USER CODE END Includes */
 
@@ -87,17 +88,22 @@ uint16_t LD_Red_time=0;
 uint16_t LD_Green_time=0;
 uint16_t LD_Blue_time=0;
 
+extern uint16_t enc_last;
 
 //_g_r_g_w
 //01010101
 uint8_t leds_off[]={0x08,0x00};
 uint8_t led_red[]={0x08,0x10};
-uint8_t led_green[]={0x08,0x44};
+uint8_t led_green[]={0x08,0x04};
 uint8_t led_write[]={0x08,0x01};
 uint8_t msg_data0[]={0x08,0x51};//{0x08,0x05};
 uint8_t msg_data1[]={0x08,0x55};
 uint8_t msg_data2[]={0x08,0x05};
 uint8_t msg_data3[]={0x08,0x50};
+
+
+uint8_t vol[] = {0x12, 0x00, 0x40, 0x00, 0x00, 0x2F};
+uint8_t seek_up[] = {0x21,0x0C};
 
 /* USER CODE END PV */
 
@@ -150,6 +156,9 @@ int main(void)
   MX_I2C1_Init();
   MX_USART3_UART_Init();
   MX_TIM10_Init();
+  MX_TIM3_Init();
+  MX_SDMMC1_SD_Init();
+  MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
   gApp_Info.bDebug = true;
   //gApp_Info->pTargetProperties->bLineDiagnostics = 1;
@@ -157,6 +166,17 @@ int main(void)
   //HAL_DBGMCU_EnableDBGStandbyMode();
   DBGMCU->APB2FZ |= DBGMCU_APB2_FZ_DBG_TIM10_STOP;
   HAL_TIM_Base_Start_IT(&htim10);
+  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
+
+
+  __HAL_TIM_SET_COUNTER(&htim3, enc_last);
+  /* Trigger Edge Detector */
+  /* 100: TI1 Edge Detector (TI1F_ED) */
+  TIM3->SMCR &= ~(TIM_SMCR_TS_0 | TIM_SMCR_TS_1);
+  TIM3->SMCR |= TIM_SMCR_TS_2;
+  /* 1: Trigger interrupt enabled. */
+  TIM3->DIER |= TIM_DIER_TIE;
+  NVIC_EnableIRQ(TIM3_IRQn);
 
   a2b_UInt32 nResult = 0;
   bool bRunFlag = true;
@@ -206,12 +226,12 @@ int main(void)
 		bRunFlag = false;							/* condition to exit the program */
 
 	//a2b_i2cPeriphWrite(struct a2b_StackContext* ctx, a2b_Int16 node, a2b_UInt16 i2cAddr, a2b_UInt16 nWrite, void* wBuf)
-	a2b_i2cPeriphWrite(gApp_Info.ctx, 0, 0x70, sizeof(msg_data0), led_green);
-	HAL_Delay(100);
-	a2b_i2cPeriphWrite(gApp_Info.ctx, 0, 0x70, sizeof(msg_data1), leds_off);
-	HAL_Delay(100);
-	a2b_i2cMasterWriteRead(gApp_Info.ctx, 1, &err_reg, 1, &err_answ);
-
+//	a2b_i2cPeriphWrite(gApp_Info.ctx, 0, 0x70, sizeof(msg_data0), led_green);
+//	HAL_Delay(300);
+//	a2b_i2cPeriphWrite(gApp_Info.ctx, 0, 0x70, sizeof(msg_data1), led_red);
+//	HAL_Delay(300);
+	//a2b_i2cMasterWriteRead(gApp_Info.ctx, 1, &err_reg, 1, &err_answ);
+//	printf("%d\r\n",__HAL_TIM_GET_COUNTER(&htim3));
 
 //	#define A2B_MSG_MY_MESSAGE (A2B_MSGREQ_CUSTOM + 1)
 //

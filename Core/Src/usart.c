@@ -39,7 +39,7 @@ void MX_USART3_UART_Init(void)
 
   /* USER CODE END USART3_Init 1 */
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 921600;
+  huart3.Init.BaudRate = 2000000;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -162,6 +162,27 @@ int fputc(int ch, FILE *f)
 PUTCHAR_PROTOTYPE
 {
   HAL_UART_Transmit(&huart3, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+  return ch;
+}
+
+
+
+
+
+#ifdef __GNUC__
+#define GETCHAR_PROTOTYPE int __io_getchar (void)
+#else
+#define GETCHAR_PROTOTYPE int fgetc(FILE * f)
+#endif /* __GNUC__ */
+
+GETCHAR_PROTOTYPE
+{
+  uint8_t ch = 0;
+  // Clear the Overrun flag just before receiving the first character
+  __HAL_UART_CLEAR_OREFLAG(&huart3);
+
+  HAL_UART_Receive(&huart3, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+  //HAL_UART_Transmit(&huart3, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
   return ch;
 }
 
