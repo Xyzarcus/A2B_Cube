@@ -627,17 +627,17 @@ a2b_pluginExecute
 
         	radioCtrl = a2b_msgGetUserData(msg);
 
-        	A2B_APP_LOG("A2B_MSGREQ_CUSTOM2\t%d\n\r", radioCtrl->nDataSz);
+        	//A2B_APP_LOG("A2B_MSGREQ_CUSTOM2\t%d\n\r", radioCtrl->nDataSz);
 
         	//initMsg = (a2b_PluginInit*)a2b_msgGetUserData( msg );
         	//initMsg = (a2b_PluginInit*)a2b_msgGetPayload( msg );
 			//initMsg->resp.status = A2B_RESULT_SUCCESS;
-
+        	uint8_t resp[]={0,0,0,0,0,0,0,0,0,0,0,0,0};
 			//a2b_i2cPeriphWrite(ctx, 1, 0x11, 2, seek_up);
-			a2b_i2cPeriphWrite(ctx, 1, 0x11, radioCtrl->nDataSz, radioCtrl->pwBuf);
+			//a2b_i2cPeriphWrite(ctx, 1, 0x11, radioCtrl->nDataSz, radioCtrl->pwBuf);
+			a2b_i2cPeriphWriteRead(ctx, 1, 0x11, radioCtrl->nDataSz, radioCtrl->pwBuf, 1, resp);
 
-
-
+			A2B_APP_LOG("A2B_MSGREQ_CUSTOM2\t0x%02X\n\r", resp[0]);
 
 //			if(initMsg->req.pNodePeriDeviceConfig != A2B_NULL)
 //			{
