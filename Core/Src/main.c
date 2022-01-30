@@ -39,7 +39,10 @@
 #include <stdio.h>
 #include "..\adi_a2b_datatypes.h"
 #include "adi_a2b_commch_interface.h"
+
+#ifdef A2B_FEATURE_COMM_CH
 #include "adi_a2b_commch_appinterface.h"
+#endif
 #include "plugin_priv.h"
 #include <a2bapp.h>
 
@@ -102,7 +105,7 @@ uint8_t msg_data2[]={0x08,0x05};
 uint8_t msg_data3[]={0x08,0x50};
 
 
-uint8_t vol[] = {0x12, 0x00, 0x40, 0x00, 0x00, 0x2F};
+uint8_t vol[] = {0x12, 0x00, 0x40, 0x00, 0x00, 0x1F};
 uint8_t seek_up[] = {0x21,0x0C};
 
 /* USER CODE END PV */
@@ -170,12 +173,11 @@ int main(void)
 
 
   __HAL_TIM_SET_COUNTER(&htim3, enc_last);
-  /* Trigger Edge Detector */
-  /* 100: TI1 Edge Detector (TI1F_ED) */
-  TIM3->SMCR &= ~(TIM_SMCR_TS_0 | TIM_SMCR_TS_1);
+
+  TIM3->SMCR &= ~(TIM_SMCR_TS_0 | TIM_SMCR_TS_1); /* 100: TI1 Edge Detector (TI1F_ED) */
   TIM3->SMCR |= TIM_SMCR_TS_2;
-  /* 1: Trigger interrupt enabled. */
-  TIM3->DIER |= TIM_DIER_TIE;
+
+  TIM3->DIER |= TIM_DIER_TIE;/* 1: Trigger interrupt enabled. */
   NVIC_EnableIRQ(TIM3_IRQn);
 
   a2b_UInt32 nResult = 0;
@@ -202,8 +204,8 @@ int main(void)
 //  A2B_COMMCH_RET eRet = A2B_COMMCH_SUCCESS;
 //  eRet = adi_a2b_app_CommChInit();
 
-  uint8_t err_reg=0x02;//{0x17};
-  uint8_t err_answ=0x0;
+//  uint8_t err_reg=0x02;//{0x17};
+//  uint8_t err_answ=0x0;
   //eRet = adi_a2b_app_CommChSendMsg(a2b_UInt8 nMsgId, a2b_UInt16 nMsgLenInBytes, a2b_UInt8* pMsgPayload, int16 nNodeAddr);
 
 //  struct a2b_StackContext *ctx; /*!< Stack context already initialized */
@@ -230,8 +232,7 @@ int main(void)
 //	HAL_Delay(300);
 //	a2b_i2cPeriphWrite(gApp_Info.ctx, 0, 0x70, sizeof(msg_data1), led_red);
 //	HAL_Delay(300);
-	//a2b_i2cMasterWriteRead(gApp_Info.ctx, 1, &err_reg, 1, &err_answ);
-//	printf("%d\r\n",__HAL_TIM_GET_COUNTER(&htim3));
+
 
 //	#define A2B_MSG_MY_MESSAGE (A2B_MSGREQ_CUSTOM + 1)
 //
@@ -253,31 +254,6 @@ int main(void)
 
 
 
-
-
-
-
-
-
-
-
-	//adi_a2b_PeriheralConfig(struct a2b_Plugin* plugin, ADI_A2B_NODE_PERICONFIG *pPeriConfig);
-//	if(gbPb1Pressed == true)
-//	{
-//		gbPb1Pressed = false;
-//		oXfadeData.eXfadeSrc = A2B_ALT_RX_CHN;
-//		eCommChRet = adi_a2b_app_CommChSendMsg(A2B_COMMCH_MSG_REQ_XFADE_AUDIO_SRC, (sizeof(XfadePayload)/sizeof(a2b_UInt8)) , (uint8 *)&oXfadeData, 1);
-//		A2B_UNUSED(eCommChRet);
-//
-//	}
-//	HAL_Delay(50);
-//	else if(gbPb2Pressed == true)
-//	{
-//		gbPb2Pressed = false;
-//		oXfadeData.eXfadeSrc = A2B_ORIG_RX_CHN;
-//		eCommChRet = adi_a2b_app_CommChSendMsg(A2B_COMMCH_MSG_REQ_XFADE_AUDIO_SRC, (sizeof(XfadePayload)/sizeof(a2b_UInt8)) , (uint8 *)&oXfadeData, 1);
-//		A2B_UNUSED(eCommChRet);
-//	}
 
     /* USER CODE END WHILE */
 
@@ -340,6 +316,8 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
+
+#ifdef A2B_FEATURE_COMM_CH
 /***********************************************************************************/
 /*!
     @brief          This is the call from Communication channel Application wrapper
@@ -465,7 +443,7 @@ static void a2b_HandleCommChRxMsg(uint8 nMsgId, uint16 nMsgLenInBytes, uint8* pM
 //        }
 //    }
 //}
-
+#endif
 
 
 static

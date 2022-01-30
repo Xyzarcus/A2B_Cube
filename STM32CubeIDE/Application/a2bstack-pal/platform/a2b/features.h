@@ -164,7 +164,7 @@
  * This option controls whether Communication Channel needs to be supported
  *Communication Channel enables node to node message communication over Mailbox
  *  */
-#define A2B_FEATURE_COMM_CH
+//#define A2B_FEATURE_COMM_CH
 
 
 //#define ENABLE_INTRRUPT_PROCESS

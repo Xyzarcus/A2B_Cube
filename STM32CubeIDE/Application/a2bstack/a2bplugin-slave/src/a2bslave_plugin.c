@@ -379,7 +379,7 @@ a2b_pluginOpen
     if ( A2B_NULL != nodeSig )
     {
 		nodeAddr = nodeSig->nodeAddr;
-
+		A2B_APP_LOG("a2b_pluginOpen\t\topening slave plugin for nodeAddr = %d\r\n", nodeAddr);
 		A2B_TRACE1((ctx, (A2B_TRC_DOM_PLUGIN | A2B_TRC_LVL_INFO),
 								 "a2b_pluginOpen: opening slave plugin for "
 								 "nodeAddr = %hd", &nodeAddr));
@@ -550,7 +550,7 @@ a2b_pluginExecute
     }
 
     cmd    = a2b_msgGetCmd(msg);
-
+    A2B_APP_LOG("a2b_pluginExecute\t\tEnter: %s execute:%d\r\n", A2B_SLAVE_PLUGIN_NAME, cmd);
     A2B_TRACE2((ctx, (A2B_TRC_DOM_PLUGIN | A2B_TRC_LVL_TRACE1),
                 "Enter: %s execute(%ld):", A2B_SLAVE_PLUGIN_NAME, &cmd));
 
@@ -738,7 +738,7 @@ A2B_SLAVE_PLUGIN_INIT
     )
 {
     a2b_Bool status = A2B_FALSE;
-
+    A2B_APP_LOG("A2B_SLAVE_PLUGIN_INIT\r\n");
     if ( A2B_NULL != api )
     {
         api->open      = &a2b_pluginOpen;
