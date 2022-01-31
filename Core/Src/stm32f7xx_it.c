@@ -306,16 +306,13 @@ void SysTick_Handler(void)
 				vol[5]=0;
 		}
 		printf("%d\t",vol[5]);
-		//data = (a2b_UInt32 *)a2b_msgGetPayload(msg);
-		//*data = 0xABCDABCD;
+
 		radioEvt->pwBuf=vol;
 		radioEvt->nDataSz= 6;
 		a2b_msgSetUserData(msg, radioEvt, A2B_NULL);
 		result = a2b_msgRtrSendRequest(msg, slaveNode, NULL);
 		a2b_msgUnref(msg);
 	}
-
-
 
   }
 

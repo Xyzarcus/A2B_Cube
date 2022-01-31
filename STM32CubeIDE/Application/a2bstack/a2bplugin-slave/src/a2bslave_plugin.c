@@ -379,7 +379,13 @@ a2b_pluginOpen
     if ( A2B_NULL != nodeSig )
     {
 		nodeAddr = nodeSig->nodeAddr;
-		A2B_APP_LOG("a2b_pluginOpen\t\topening slave plugin for nodeAddr = %d\r\n", nodeAddr);
+
+		A2B_APP_LOG("a2b_pluginOpen\t\tnodeAddr=%d\tvendorId=%d\tversion=%d\tproductId=%d\r\n",
+				nodeAddr,
+				nodeSig->bddInfo.vendorId,
+				nodeSig->bddInfo.version ,
+				nodeSig->bddInfo.productId);
+
 		A2B_TRACE1((ctx, (A2B_TRC_DOM_PLUGIN | A2B_TRC_LVL_INFO),
 								 "a2b_pluginOpen: opening slave plugin for "
 								 "nodeAddr = %hd", &nodeAddr));
@@ -550,7 +556,7 @@ a2b_pluginExecute
     }
 
     cmd    = a2b_msgGetCmd(msg);
-    A2B_APP_LOG("a2b_pluginExecute\t\tEnter: %s execute:%d\r\n", A2B_SLAVE_PLUGIN_NAME, cmd);
+    A2B_APP_LOG("a2b_pluginExecute\t\t\tplugin:%p\tnodeAddr=%d\texecute:%d\t\r\n", plugin, nodeAddr, cmd);
     A2B_TRACE2((ctx, (A2B_TRC_DOM_PLUGIN | A2B_TRC_LVL_TRACE1),
                 "Enter: %s execute(%ld):", A2B_SLAVE_PLUGIN_NAME, &cmd));
 
@@ -629,7 +635,7 @@ a2b_pluginExecute
         	uint8_t resp[]={0,0,0,0,0,0,0,0,0,0,0,0,0};
 			a2b_i2cPeriphWriteRead(ctx, 1, 0x11, radioCtrl->nDataSz, radioCtrl->pwBuf, 1, resp);
 
-			A2B_APP_LOG("A2B_MSGREQ_CUSTOM2\t0x%02X\n\r", resp[0]);
+			A2B_APP_LOG("A2B_MSGREQ_CUSTOM2\tresponse:0x%02X\n\r", resp[0]);
 
         	break;
 
@@ -738,7 +744,7 @@ A2B_SLAVE_PLUGIN_INIT
     )
 {
     a2b_Bool status = A2B_FALSE;
-    A2B_APP_LOG("A2B_SLAVE_PLUGIN_INIT\r\n");
+    A2B_APP_LOG("a2b_Slave_pluginInit\r\n");
     if ( A2B_NULL != api )
     {
         api->open      = &a2b_pluginOpen;

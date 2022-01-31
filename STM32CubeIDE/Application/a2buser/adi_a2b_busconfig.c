@@ -6,7 +6,7 @@ and its licensors.
 * @file: adi_a2b_busconfig.c
 * @brief: This file contains A2B Schematic information
 * @version: $Revision$
-* @date: Tuesday, January 18, 2022-5:49:50 PM
+* @date: Monday, January 31, 2022-3:12:42 PM
 * BCF Version - 1.0.0
 * A2B DLL version- 19.3.0
 * A2B Stack DLL version- 19.3.0.0
@@ -691,7 +691,7 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode0=
 		.bPDMInvClk		= DISABLED ,
 
 		/*! PDM Alternate Clock */
-		.bPDMAltClk		= DISABLED ,
+		.bPDMAltClk		= ENABLED ,
 
 		/*! PDM0 Falling Edge First */
 		.bPDM0FallingEdgeFrst		= DISABLED ,
@@ -2009,7 +2009,7 @@ static	uint8 gaPeriCfg_1_11_14_Data[1] =
  ADI_A2B_MEM_PERI_CONFIG_DATA 
 static	uint8 gaPeriCfg_1_11_15_Data[5] =
 {
-	0x0u,	0x40u,	0x0u,	0x0u,	0x1Fu
+	0x0u,	0x40u,	0x0u,	0x0u,	0x1Fu	
 };
 
  ADI_A2B_MEM_PERI_CONFIG_DATA 

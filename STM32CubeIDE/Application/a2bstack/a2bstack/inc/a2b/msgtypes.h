@@ -138,11 +138,11 @@
   */
 #define A2B_MSGREQ_CUSTOM                  (100u)
 
-#define A2B_MSGREQ_CUSTOM1                  (101u)
+#define A2B_MSGREQ_CUSTOM1                  (110u)
 
-#define A2B_MSGREQ_CUSTOM2                  (102u)
+#define A2B_MSGREQ_CUSTOM2                  (111u)
 
-#define A2B_MSGREQ_CUSTOM3                  (103u)
+#define A2B_MSGREQ_CUSTOM3                  (112u)
 
 /** \} -- a2bstack_msgtypes_msgreq */
 

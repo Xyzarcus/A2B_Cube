@@ -1633,20 +1633,30 @@ a2b_HResult a2bapp_pluginsLoad(struct a2b_PluginApi** plugins, a2b_UInt16* numPl
 	int i = 0;
 
 	A2B_UNUSED(ecb);
-	appPlugins = calloc(gpApp_Info[ecb->palEcb.nChainIndex]->bdd.nodes_count, sizeof(**plugins));
+	appPlugins = calloc(gpApp_Info[ecb->palEcb.nChainIndex]->bdd.nodes_count+1, sizeof(**plugins));
 
 	A2B_MASTER_PLUGIN_INIT(&appPlugins[0]);
-	A2B_APP_DBG_LOG("Master plugin load done \r\n");
+	A2B_APP_DBG_LOG("Master plugin load done: \tappPlugins[0]\r\n");
 
 	for (i = 1; i < (gpApp_Info[ecb->palEcb.nChainIndex]->bdd.nodes_count); i++)
 	{
 		A2B_SLAVE_PLUGIN_INIT(&appPlugins[i]);
+		appPlugins[i].name[16]=i+30;
+		A2B_APP_DBG_LOG("Slave plugins load done: \tappPlugins[%d]\r\n",i);
 	}
 
-	A2B_APP_DBG_LOG("Slave plugins load done \r\n");
+	//A2B_APP_DBG_LOG("Slave plugins load done \r\n");
+
+
+	A2B_SLAVE_PLUGIN_INIT(&appPlugins[(gpApp_Info[ecb->palEcb.nChainIndex]->bdd.nodes_count)]);
+	A2B_APP_DBG_LOG("Slave plugin load done: \tappPlugins[%d]\r\n", (gpApp_Info[ecb->palEcb.nChainIndex]->bdd.nodes_count));
+
+
+
+
 
 	*plugins = appPlugins;
-	*numPlugins = gpApp_Info[ecb->palEcb.nChainIndex]->bdd.nodes_count;
+	*numPlugins = gpApp_Info[ecb->palEcb.nChainIndex]->bdd.nodes_count+1;
 
 	return 0u;
 }
