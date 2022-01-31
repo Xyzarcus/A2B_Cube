@@ -95,6 +95,8 @@ uint16_t enc_current = 5000;
 uint16_t enc_mark = 5000;
 int16_t enc_change = 0;
 
+bool brd_btn=false;
+uint16_t brd_btn_cnt = 0;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -251,7 +253,7 @@ void SysTick_Handler(void)
 	a2b_radioEventInfo* radioEvt;
 
 
-	msg = a2b_msgAlloc(gApp_Info.ctx, A2B_MSG_REQUEST, A2B_MSGREQ_CUSTOM2);
+	msg = a2b_msgAlloc(gApp_Info.ctx, A2B_MSG_REQUEST, A2B_MSGREQ_RADIO);
 	if (msg != A2B_NULL)
 	{
 		//data = (a2b_UInt32 *)a2b_msgGetPayload(msg);
@@ -287,7 +289,7 @@ void SysTick_Handler(void)
 	a2b_UInt16 slaveNode = 1;
 	a2b_radioEventInfo* radioEvt;
 
-	msg = a2b_msgAlloc(gApp_Info.ctx, A2B_MSG_REQUEST, A2B_MSGREQ_CUSTOM2);
+	msg = a2b_msgAlloc(gApp_Info.ctx, A2B_MSG_REQUEST, A2B_MSGREQ_RADIO);
 	if (msg != A2B_NULL)
 	{
 		if (enc_change>0)
@@ -316,6 +318,48 @@ void SysTick_Handler(void)
 
   }
 
+
+  if (brd_btn)
+  {
+	  if (HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin))
+	  {
+		  brd_btn_cnt++;
+	  }
+	  else
+	  {
+		  brd_btn_cnt=0;
+		  brd_btn = false;
+	  }
+  }
+
+  if (brd_btn_cnt>15)
+  {
+	  brd_btn_cnt=0;
+	  brd_btn = false;
+
+	  printf("BRD_BTN\t\t");
+
+	  struct a2b_Msg *msg;
+	  a2b_HResult result;
+	  a2b_UInt32 *data;
+	  a2b_UInt16 slaveNode = 0;
+	  //a2b_radioEventInfo* radioEvt;
+
+
+	  msg = a2b_msgAlloc(gApp_Info.ctx, A2B_MSG_REQUEST, A2B_MSGREQ_LED);
+	  if (msg != A2B_NULL)
+	  {
+		  data = (a2b_UInt32 *)a2b_msgGetPayload(msg);
+		  *data = 0xABCDABCD;
+		  //a2b_msgSetUserData( msg, (a2b_Handle)a2b_Custom2, A2B_NULL );
+		  //a2b_Custom2	; \t%d\t%d\n\r", sizeof(a2b_msgGetUserData(msg)), sizeof(a2b_msgGetUserData(msg))/sizeof(a2b_msgGetUserData(msg)[0])
+		  //radioEvt->pwBuf=seek_up;
+		  //radioEvt->nDataSz= 2;
+		  //a2b_msgSetUserData(msg, radioEvt, A2B_NULL);
+		  result = a2b_msgRtrSendRequest(msg, slaveNode, NULL);
+		  a2b_msgUnref(msg);
+	  }
+  }
 
   /* USER CODE END SysTick_IRQn 1 */
 }
@@ -434,8 +478,8 @@ void EXTI15_10_IRQHandler(void)
   HAL_GPIO_EXTI_IRQHandler(USER_Btn_Pin);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
 
-  printf("EXTI15-10\r\n");
-
+  //printf("EXTI15-10\r\n");
+  brd_btn=true;
   /* USER CODE END EXTI15_10_IRQn 1 */
 }
 

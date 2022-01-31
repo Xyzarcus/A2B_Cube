@@ -556,7 +556,7 @@ a2b_pluginExecute
     }
 
     cmd    = a2b_msgGetCmd(msg);
-    A2B_APP_LOG("a2b_pluginExecute\t\t\tplugin:%p\tnodeAddr=%d\texecute:%d\t\r\n", plugin, nodeAddr, cmd);
+    A2B_APP_LOG("a2b_pluginExecute\t\tplugin:%p\tnodeAddr=%d\texecute:%d\t\r\n", plugin, nodeAddr, cmd);
     A2B_TRACE2((ctx, (A2B_TRC_DOM_PLUGIN | A2B_TRC_LVL_TRACE1),
                 "Enter: %s execute(%ld):", A2B_SLAVE_PLUGIN_NAME, &cmd));
 
@@ -628,21 +628,21 @@ a2b_pluginExecute
         	a2b_slave_getVerInfo((struct a2b_PluginVerInfo*)a2b_msgGetPayload(msg));
             break;
 
-        case A2B_MSGREQ_CUSTOM2:
+        case A2B_MSGREQ_RADIO://A2B_MSGREQ_CUSTOM2:
 
         	radioCtrl = a2b_msgGetUserData(msg);
 
         	uint8_t resp[]={0,0,0,0,0,0,0,0,0,0,0,0,0};
 			a2b_i2cPeriphWriteRead(ctx, 1, 0x11, radioCtrl->nDataSz, radioCtrl->pwBuf, 1, resp);
 
-			A2B_APP_LOG("A2B_MSGREQ_CUSTOM2\tresponse:0x%02X\n\r", resp[0]);
+			A2B_APP_LOG("A2B_MSGREQ_RADIO\tresponse:0x%02X\n\r", resp[0]);
 
         	break;
 
-        case (A2B_MSGREQ_CUSTOM3):
-			A2B_APP_LOG("A2B_MSGREQ_CUSTOM3\n\r");
-        	initMsg = (a2b_PluginInit*)a2b_msgGetPayload( msg );
-			initMsg->resp.status = A2B_RESULT_SUCCESS;
+        case (A2B_MSGREQ_LED):
+			A2B_APP_LOG("A2B_MSGREQ_LED\n\r");
+//        	initMsg = (a2b_PluginInit*)a2b_msgGetPayload( msg );
+//			initMsg->resp.status = A2B_RESULT_SUCCESS;
 
 
 			break;

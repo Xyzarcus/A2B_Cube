@@ -1641,8 +1641,8 @@ a2b_HResult a2bapp_pluginsLoad(struct a2b_PluginApi** plugins, a2b_UInt16* numPl
 	for (i = 1; i < (gpApp_Info[ecb->palEcb.nChainIndex]->bdd.nodes_count); i++)
 	{
 		A2B_SLAVE_PLUGIN_INIT(&appPlugins[i]);
-		appPlugins[i].name[16]=i+30;
-		A2B_APP_DBG_LOG("Slave plugins load done: \tappPlugins[%d]\r\n",i);
+		appPlugins[i].name[16]=i+0x30;
+		A2B_APP_DBG_LOG("Slave plugins load done: \tappPlugins[%d] \t%.20s\r\n",i, appPlugins[i].name);
 	}
 
 	//A2B_APP_DBG_LOG("Slave plugins load done \r\n");

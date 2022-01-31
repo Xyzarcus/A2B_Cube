@@ -136,13 +136,13 @@
 /** Arbitrary custom command.  Anything beyond this
   *  value is considered a custom command.
   */
-#define A2B_MSGREQ_CUSTOM                  (100u)
+#define A2B_MSGREQ_CUSTOM					(100u)
 
-#define A2B_MSGREQ_CUSTOM1                  (110u)
+#define A2B_MSGREQ_CUSTOM1					(110u)
 
-#define A2B_MSGREQ_CUSTOM2                  (111u)
+#define A2B_MSGREQ_RADIO					(111u)
 
-#define A2B_MSGREQ_CUSTOM3                  (112u)
+#define A2B_MSGREQ_LED						(112u)
 
 /** \} -- a2bstack_msgtypes_msgreq */
 

@@ -2009,7 +2009,7 @@ static	uint8 gaPeriCfg_1_11_14_Data[1] =
  ADI_A2B_MEM_PERI_CONFIG_DATA 
 static	uint8 gaPeriCfg_1_11_15_Data[5] =
 {
-	0x0u,	0x40u,	0x0u,	0x0u,	0x1Fu	
+	0x0u,	0x40u,	0x0u,	0x0u,	0x0Fu
 };
 
  ADI_A2B_MEM_PERI_CONFIG_DATA 
