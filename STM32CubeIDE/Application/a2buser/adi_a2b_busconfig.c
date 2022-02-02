@@ -6,7 +6,7 @@ and its licensors.
 * @file: adi_a2b_busconfig.c
 * @brief: This file contains A2B Schematic information
 * @version: $Revision$
-* @date: Monday, January 31, 2022-3:12:42 PM
+* @date: Wednesday, February 2, 2022-7:01:13 PM
 * BCF Version - 1.0.0
 * A2B DLL version- 19.3.0
 * A2B Stack DLL version- 19.3.0.0
@@ -233,7 +233,7 @@ static ADI_A2B_MASTER_NCD sMasterNode0=
 	.sConfigCtrlSettings =
 	{
 		/*! Early acknowledge for I2C read/write */
-		.bI2CEarlyAck		= DISABLED ,
+		.bI2CEarlyAck		= ENABLED ,
 
 		/*! Response cycles  */
 		.nRespCycle			= 0x77u ,
@@ -679,7 +679,7 @@ static ADI_A2B_SLAVE_NCD sChain0_SlaveNode0=
 		.nNumSlotsPDM0		= A2B_PDM0SLOTS_1 ,
 
 		/*! Number of PDM1 slots  */
-		.nNumSlotsPDM1		= A2B_PDM1SLOTS_1 ,
+		.nNumSlotsPDM1		= A2B_PDM1SLOTS_2 ,
 
 		/*! Use High Pass Filter  */
 		.bHPFUse		= DISABLED ,
@@ -1737,7 +1737,7 @@ static A2B_PERIPHERAL_DEVICE_CONFIG  Target_PeriConfig1=
 	.nChTx0 = 0, 
 
 	/* No of Rx0 channels  */ 
-	.nChRx0 = 1, 
+	.nChRx0 = 2, 
 
 	/* No of Tx1 channels  */ 
 	.nChTx1 = 0, 
@@ -1833,7 +1833,7 @@ static A2B_PERIPHERAL_DEVICE_CONFIG  sChain0_Slave0_PeriConfig1=
 	.nChRx0 = 0, 
 
 	/* No of Tx1 channels  */ 
-	.nChTx1 = 0, 
+	.nChTx1 = 2, 
 
 	/* No of Rx1 channels  */ 
 	.nChRx1 = 0, 
@@ -1876,7 +1876,7 @@ static A2B_PERIPHERAL_DEVICE_CONFIG  sChain0_Slave1_PeriConfig0=
 	.bUseRx1 = DISABLED, 
 
 	/* No of Tx0 channels  */ 
-	.nChTx0 = 0, 
+	.nChTx0 = 2, 
 
 	/* No of Rx0 channels  */ 
 	.nChRx0 = 0, 
@@ -2009,7 +2009,7 @@ static	uint8 gaPeriCfg_1_11_14_Data[1] =
  ADI_A2B_MEM_PERI_CONFIG_DATA 
 static	uint8 gaPeriCfg_1_11_15_Data[5] =
 {
-	0x0u,	0x40u,	0x0u,	0x0u,	0x0Fu
+	0x0u,	0x40u,	0x0u,	0x0u,	0x1Fu	
 };
 
  ADI_A2B_MEM_PERI_CONFIG_DATA 
