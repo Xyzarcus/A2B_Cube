@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "fatfs.h"
 #include "i2c.h"
 #include "sdmmc.h"
@@ -93,7 +94,7 @@ uint16_t LD_Blue_time=0;
 
 extern uint16_t enc_last;
 
-//_g_r_g_w
+//_g_r_g_w	//PCA9632
 //01010101
 uint8_t leds_off[]={0x08,0x00};
 uint8_t led_red[]={0x08,0x10};
@@ -115,10 +116,12 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 
 //void  adi_a2b_Delay(a2b_UInt32 nTime);
+#ifdef A2B_FEATURE_COMM_CH
 static void 			a2b_HandleCommChRxMsg(uint8 nMsgId, uint16 nMsgLenInBytes, uint8* pMsgPayload);
 //static void 			PushButtons_Init(void);
 //static ADI_GPIO_RESULT 	PushButtons_Setup(ADI_GPIO_PORT	ePbPort, uint32_t nPbPin, ADI_GPIO_PIN_INTERRUPT  ePbPinInt, uint32_t  nPbPinIntPin, ADI_GPIO_CALLBACK pfCallback);
 //static void 			GpioCallback(ADI_GPIO_PIN_INTERRUPT ePinInt, uint32_t Data, void *pCBParam);
+#endif
 static void a2b_LED_toggle(struct a2b_Msg* msg);
 
 /* USER CODE END PFP */
@@ -161,8 +164,56 @@ int main(void)
   MX_TIM10_Init();
   MX_TIM3_Init();
   MX_SDMMC1_SD_Init();
+  MX_DMA_Init();
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
+
+  FRESULT res; // FatFs function common result code
+  uint32_t byteswritten, bytesread; // File write/read counts
+  uint8_t wtext[] = "STM32 FATFS works great!"; // File write buffer
+  uint8_t rtext[_MAX_SS];// File read buffer
+
+
+
+  if(f_mount(&SDFatFS, (TCHAR const*)SDPath, 0) != FR_OK)
+  {
+	  A2B_APP_LOG("SD mount error\r\n");
+	  //Error_Handler();
+  }
+  else
+  {
+	  A2B_APP_LOG("SD mounted\r\n");
+	  /*if(f_mkfs((TCHAR const*)SDPath, FM_ANY, 0, rtext, sizeof(rtext)) != FR_OK)
+	  {
+		  Error_Handler();
+	  }
+	  else
+	  {
+			//Open file for writing (Create)
+			if(f_open(&SDFile, "STM32.TXT", FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
+			{
+				Error_Handler();
+			}
+			else
+			{
+
+				//Write to the text file
+				res = f_write(&SDFile, wtext, strlen((char *)wtext), (void *)&byteswritten);
+				if((byteswritten == 0) || (res != FR_OK))
+				{
+					Error_Handler();
+				}
+				else
+				{
+
+					f_close(&SDFile);
+				}
+			}
+	  }*/
+  }
+  //f_mount(&SDFatFS, (TCHAR const*)NULL, 0);
+
+
   gApp_Info.bDebug = true;
   //gApp_Info->pTargetProperties->bLineDiagnostics = 1;
   //gApp_Info->pTargetProperties->nAttemptsCriticalFault = 5;
@@ -536,6 +587,7 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+  f_mount(&SDFatFS, (TCHAR const*)NULL, 0);
   while (1)
   {
   }

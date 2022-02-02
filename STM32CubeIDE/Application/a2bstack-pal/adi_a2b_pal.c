@@ -66,7 +66,8 @@ and its licensors.
 #include "stm32f7xx_hal_def.h"
 #include "tim.h"
 #include "a2b/error.h"
-
+#include <a2bapp.h>
+#include "fatfs.h"
 /*============= D E F I N E S =============*/
 
 /*============= D A T A =============*/
@@ -419,6 +420,7 @@ a2b_HResult a2b_pal_TimerInitFunc(A2B_ECB* ecb)
 {
 	pPalEcb = &ecb->palEcb;
 	a2b_HResult nReturnValue = (a2b_UInt32)0;
+	A2B_APP_LOG("a2b_pal_TimerInitFunc\n\r");
 //    a2b_UInt32  nDummy;
 //    nDummy = (a2b_UInt32)&adi_a2b_TimerCallback;
     ecb->palEcb.nCurrTime = 0u;
@@ -472,7 +474,7 @@ static void adi_a2b_TimerCallback(ADI_A2B_TIMER_HANDLER_PTR pTimerHandle)
 //	nReturnValue = adi_a2b_TimerStart(pPalEcb->oTimerHandler.nTimerNo,
 //			pPalEcb->oTimerHandler.nTimerExpireVal);
 //    pPalEcb->nCurrTime += 1u;		//in irq
-
+	A2B_APP_LOG("adi_a2b_TimerCallback\n\r");
 }
 
 /*****************************************************************************/
@@ -498,7 +500,7 @@ a2b_HResult a2b_pal_TimerShutdownFunc(A2B_ECB* ecb)
 
 //	nReturnValue = adi_a2b_TimerStop(pPalEcb->oTimerHandler.nTimerNo);
 //    nReturnValue = adi_a2b_TimerClose(pPalEcb->oTimerHandler.nTimerNo);
-
+	A2B_APP_LOG("a2b_pal_TimerShutdownFunc\n\r");
 	ecb->palEcb.nCurrTime = 0u;
 //	pPalEcb->oTimerHandler.pCallbackhandle = NULL;
 //	pPalEcb->oTimerHandler.nTimerExpireVal = 0u;  /* One millisec counter */
@@ -1058,7 +1060,10 @@ a2b_HResult a2b_pal_logWrite(
 		strcat((char *__restrict__)msg, (char *__restrict__)newline);
 		pLogInfo = (A2B_LOG_INFO *)hnd;
 		msg_len = a2b_strlen(msg) * sizeof(a2b_Char);
-		fwrite(msg, 1, msg_len, pLogInfo->fd);
+		//fwrite(msg, 1, msg_len, pLogInfo->fd);
+		//fwrite(msg, 1, msg_len, pLogInfo->fd);
+		//f_write(&SDFile, wtext, strlen((char *)wtext), (void *)&byteswritten);
+		f_write(&pLogInfo->fd, msg, 1, msg_len);
 		nResult = A2B_RESULT_SUCCESS;
 	}
 	return nResult;
