@@ -145,7 +145,6 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.402959414" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1154265762.1322921789" name="adi_a2b_audio_mgr.h" rcbsApplicability="disable" resourcePath="Application/a2bstack-pal/adi_a2b_audio_mgr.h" toolsToInvoke=""/>
 					<folderInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1154265762.1749703303" name="/" resourcePath="Application/a2bcommchannel_user">
 						<toolChain id="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug.198731310" name="MCU ARM GCC" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug" unusedChildren="">
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu.291207538.385747289" name="MCU" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu.291207538"/>
@@ -178,7 +177,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Application/a2bstack-pal/adi_a2b_audio_mgr.h|Application/a2bstack-pal/adi_a2b_audio_mgr.c|Application/a2bcommchannel_user|Application/a2bcommchannel" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Application/a2bstack-pal/adi_a2b_audiorouting.h|Application/a2buser/adi_a2b_audioroutingtable.c|Application/a2bstack-pal/adi_a2b_audio_mgr.h|Application/a2bstack-pal/adi_a2b_audio_mgr.c|Application/a2bcommchannel_user|Application/a2bcommchannel" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
